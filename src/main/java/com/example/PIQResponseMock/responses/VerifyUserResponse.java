@@ -1,4 +1,4 @@
-package com.example.PIQResponseMock.Responses;
+package com.example.PIQResponseMock.responses;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
