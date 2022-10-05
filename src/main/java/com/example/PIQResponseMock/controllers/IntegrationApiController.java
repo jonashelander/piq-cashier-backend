@@ -4,9 +4,7 @@
 package com.example.PIQResponseMock.controllers;
 
 
-import com.example.PIQResponseMock.responses.Attributes;
-import com.example.PIQResponseMock.responses.AuthorizeResponse;
-import com.example.PIQResponseMock.responses.VerifyUserResponse;
+import com.example.PIQResponseMock.responses.*;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -66,6 +64,30 @@ public class IntegrationApiController {
         );
 
         return new ResponseEntity(authorizeResponse, HttpStatus.OK);
+    }
+
+    @PostMapping("/transfer")
+    public ResponseEntity<TransferResponse> transfer() {
+        TransferResponse transferResponse = new TransferResponse(
+                "JonasSE",
+                true,
+                "12345",
+                54321,
+                401,
+                "Bad program"
+        );
+        return new ResponseEntity(transferResponse, HttpStatus.OK);
+    }
+
+    @PostMapping("/cancel")
+    public ResponseEntity<CancelResponse> cancel() {
+        CancelResponse cancelResponse = new CancelResponse(
+                "JonasSE",
+                true,
+                502,
+                "Something went wrong"
+        );
+        return new ResponseEntity(cancelResponse, HttpStatus.OK);
     }
 
 }
