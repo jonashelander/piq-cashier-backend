@@ -7,7 +7,6 @@ package com.example.PIQResponseMock.controllers;
 import com.example.PIQResponseMock.responses.Attributes;
 import com.example.PIQResponseMock.responses.AuthorizeResponse;
 import com.example.PIQResponseMock.responses.VerifyUserResponse;
-import org.apache.coyote.Response;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -40,7 +39,7 @@ public class IntegrationApiController {
                 "070-9660528",
                 100.5,
                 "EUR",
-                "en",
+                "sv_SE",
                 new Attributes(
                         "something1",
                         "something2"
