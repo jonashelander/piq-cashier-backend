@@ -90,4 +90,45 @@ public class IntegrationApiController {
         return new ResponseEntity(cancelResponse, HttpStatus.OK);
     }
 
+    @PostMapping("/notification")
+    public ResponseEntity<NotificationResponse> notification() {
+        NotificationResponse notificationResponse = new NotificationResponse(
+                true,
+                400,
+                "Something went wrong"
+        );
+        return new ResponseEntity(notificationResponse, HttpStatus.OK);
+    }
+
+    @PostMapping("/lookupuser")
+    public ResponseEntity<LookupUserResponse> lookupuser() {
+        LookupUserResponse lookupUserResponse = new LookupUserResponse(
+                "Jonas",
+                true,
+                "VIP",
+                "Approved",
+                "MALE",
+                "Jonas",
+                "Helander",
+                "Praktejdervägen 13",
+                "Stockholm",
+                "184 61",
+                "SWE",
+                "helanderjonas@gmail.com",
+                "1987-06-29",
+                "+46709660528",
+                100.5,
+                "EUR",
+                "sv_SE",
+                new Attributes(
+                        "attribute one",
+                        "attribute two"
+                ),
+                400,
+                "Something went wrong"
+
+        );
+        return new ResponseEntity(lookupUserResponse, HttpStatus.OK);
+    }
+
 }
