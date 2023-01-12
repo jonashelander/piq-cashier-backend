@@ -1,9 +1,6 @@
-
-
-
 package com.example.PIQResponseMock.controllers;
 
-
+import com.example.PIQResponseMock.DTO.VerifyUserDTO;
 import com.example.PIQResponseMock.responses.*;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -17,7 +14,9 @@ public class IntegrationApiController {
 
 
     @PostMapping("/verifyuser")
-    public ResponseEntity<VerifyUserResponse> verifyuser() {
+    public ResponseEntity<VerifyUserResponse> verifyUser(@RequestBody VerifyUserDTO verifyUserDTO) {
+
+
 
         VerifyUserResponse response = new VerifyUserResponse(
                 "JonasSE",
@@ -46,8 +45,16 @@ public class IntegrationApiController {
                 404,
                 "USER_NOT_FOUND"
         );
+            ResponseEntity r = new ResponseEntity(response, HttpStatus.OK);
+        System.out.println("Request:");
+        System.out.println("userId: " + verifyUserDTO.getUserId());
+        System.out.println("sessionId: " + verifyUserDTO.getSessionId());
+        System.out.println();
+        System.out.println();
+        System.out.println("Response:");
+        System.out.println(r.getBody());
 
-        return new ResponseEntity(response, HttpStatus.OK);
+        return r;
     }
 
     @PostMapping("/authorize")

@@ -2,10 +2,18 @@ package com.example.PIQResponseMock.responses;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Data
 @AllArgsConstructor
+@NoArgsConstructor
 public class VerifyUserResponse {
+    public VerifyUserResponse(String userId, boolean success, String kycStatus) {
+        this.userId = userId;
+        this.success = success;
+        this.kycStatus = kycStatus;
+    }
+
     String userId;
     boolean success;
     String userCat;
