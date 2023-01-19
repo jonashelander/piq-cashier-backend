@@ -3,6 +3,7 @@ package com.example.PIQResponseMock.services;
 import com.example.PIQResponseMock.dto.VerifyUserDTO;
 import com.example.PIQResponseMock.responses.Attributes;
 import com.example.PIQResponseMock.responses.VerifyUserResponse;
+import org.apache.coyote.Response;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -41,7 +42,9 @@ public class IntegrationApiService {
         );
         System.out.println(verifyUserDTO.getUserId());
         System.out.println(verifyUserDTO.getSessionId());
-        return new ResponseEntity<>(verifyUserResponse, HttpStatus.OK);
+        ResponseEntity responseEntity = new ResponseEntity<>(verifyUserResponse, HttpStatus.OK);
+        //responseEntity.getHeaders().add("Content-Type", "text/html; charset=utf-8");
+        return responseEntity;
 
     }
 }

@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.*;
 
 @CrossOrigin(origins = "*", allowedHeaders = "*")
 @RestController
-@RequestMapping("/paymentiq")
+@RequestMapping(path = "/paymentiq", produces = "application/json;charset=utf8")
 public class IntegrationApiController {
 
 
