@@ -1,6 +1,6 @@
 package com.example.PIQResponseMock.controllers;
 
-import com.example.PIQResponseMock.dto.VerifyUserDTO;
+import com.example.PIQResponseMock.dto.*;
 import com.example.PIQResponseMock.responses.*;
 import com.example.PIQResponseMock.services.IntegrationApiService;
 import org.springframework.http.HttpStatus;
@@ -14,92 +14,38 @@ import org.springframework.web.bind.annotation.*;
 public class IntegrationApiController {
 
 
+    IntegrationApiService integrationApiService = new IntegrationApiService();
+
+
     @PostMapping("/verifyuser")
     public ResponseEntity<VerifyUserResponse> verifyUser(@RequestBody VerifyUserDTO verifyUserDTO) {
-
-        return IntegrationApiService.verifyUser(verifyUserDTO);
-
+        return integrationApiService.verifyUser(verifyUserDTO);
     }
 
     @PostMapping("/authorize")
-    public ResponseEntity<AuthorizeResponse> authorize() {
-
-        AuthorizeResponse authorizeResponse = new AuthorizeResponse(
-                "JonasSE",
-                "True",
-                1234,
-                "01010",
-                23,
-                "Something went wrong",
-                "Should this be an Object instead?"
-        );
-
-        return new ResponseEntity(authorizeResponse, HttpStatus.OK);
+    public ResponseEntity<AuthorizeResponse> authorize(AuthorizeDTO authorizeDTO) {
+        return integrationApiService.authorize(authorizeDTO);
     }
 
     @PostMapping("/transfer")
-    public ResponseEntity<TransferResponse> transfer() {
-        TransferResponse transferResponse = new TransferResponse(
-                "JonasSE",
-                true,
-                "12345",
-                54321,
-                401,
-                "Bad program"
-        );
-        return new ResponseEntity(transferResponse, HttpStatus.OK);
+    public ResponseEntity<TransferResponse> transfer(TransferDTO transferDTO) {
+        return integrationApiService.transfer(transferDTO);
+
     }
 
     @PostMapping("/cancel")
-    public ResponseEntity<CancelResponse> cancel() {
-        CancelResponse cancelResponse = new CancelResponse(
-                "JonasSE",
-                true,
-                502,
-                "Something went wrong"
-        );
-        return new ResponseEntity(cancelResponse, HttpStatus.OK);
+    public ResponseEntity<CancelResponse> cancel(CancelDTO cancelDTO) {
+        return integrationApiService.cancel(cancelDTO);
     }
 
     @PostMapping("/notification")
-    public ResponseEntity<NotificationResponse> notification() {
-        NotificationResponse notificationResponse = new NotificationResponse(
-                true,
-                400,
-                "Something went wrong"
-        );
-        return new ResponseEntity(notificationResponse, HttpStatus.OK);
+    public ResponseEntity<NotificationResponse> notification(NotificationDTO notificationDTO) {
+        return integrationApiService.notification(notificationDTO);
     }
 
     @PostMapping("/lookupuser")
-    public ResponseEntity<LookupUserResponse> lookupuser() {
-        LookupUserResponse lookupUserResponse = new LookupUserResponse(
-                "Jonas",
-                true,
-                "VIP",
-                "Approved",
-                "MALE",
-                "Jonas",
-                "Helander",
-                "Praktejdervägen 13",
-                "Stockholm",
-                "184 61",
-                "SWE",
-                "helanderjonas@gmail.com",
-                "1987-06-29",
-                "+46709660528",
-                100.5,
-                "EUR",
-                "sv_SE",
-                new Attributes(
-                        "attribute one",
-                        "attribute two"
-                ),
-                400,
-                "Something went wrong"
-
-        );
-        return new ResponseEntity(lookupUserResponse, HttpStatus.OK);
+    public ResponseEntity<LookupUserResponse> lookupuser(LookupUserDTO lookupUserDTO) {
+        return integrationApiService.lookupUser(lookupUserDTO);
     }
 
 }
