@@ -1,6 +1,7 @@
 package com.example.PIQResponseMock.services;
 
 import com.example.PIQResponseMock.dto.*;
+import com.example.PIQResponseMock.loggers.VerifyUserLog;
 import com.example.PIQResponseMock.responses.*;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -11,11 +12,11 @@ public class IntegrationApiService {
     public ResponseEntity<VerifyUserResponse> verifyUser(VerifyUserDTO verifyUserDTO) {
 
         VerifyUserResponse verifyUserResponse = new VerifyUserResponse(
-                "JonasSE",
+                "JonasEUR",
                 true,
                 "VIP_SE",
                 "VIP",
-                "male",
+                "MALE",
                 "Jonas",
                 "Helander",
                 "Praktejdervägen 13",
@@ -38,26 +39,27 @@ public class IntegrationApiService {
                 "USER_NOT_FOUND"
 
         );
+        VerifyUserLog verifyUserLog = new VerifyUserLog(verifyUserDTO.getSessionId(), verifyUserDTO.getUserId());
+
         return new ResponseEntity<>(verifyUserResponse, HttpStatus.OK);
     }
 
     public ResponseEntity<AuthorizeResponse> authorize(AuthorizeDTO authorizeDTO) {
 
         AuthorizeResponse authorizeResponse = new AuthorizeResponse(
-                "JonasSE",
-                "True",
+                "JonasEUR",
+                true,
                 1234,
                 "01010",
                 23,
-                "Something went wrong",
-                "Should this be an Object instead?"
+                "Something went wrong"
         );
         return new ResponseEntity(authorizeResponse, HttpStatus.OK);
     }
 
     public ResponseEntity<TransferResponse> transfer(TransferDTO transferDTO) {
         TransferResponse transferResponse = new TransferResponse(
-                "JonasSE",
+                "JonasEUR",
                 true,
                 "12345",
                 54321,
@@ -69,7 +71,7 @@ public class IntegrationApiService {
 
     public ResponseEntity<CancelResponse> cancel(CancelDTO cancelDTO) {
         CancelResponse cancelResponse = new CancelResponse(
-                "JonasSE",
+                "JonasEUR",
                 true,
                 502,
                 "Something went wrong"
@@ -88,7 +90,7 @@ public class IntegrationApiService {
 
     public ResponseEntity<LookupUserResponse> lookupUser(LookupUserDTO lookupUserDTO) {
         LookupUserResponse lookupUserResponse = new LookupUserResponse(
-                "Jonas",
+                "JonasEUR",
                 true,
                 "VIP",
                 "Approved",

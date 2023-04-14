@@ -8,10 +8,10 @@ import lombok.Data;
 public class AuthorizeResponse {
 
         String userId;
-        String success;
+        boolean success;
         int merchantTxId;
         String authCode;
         int errCode;
         String errMsg;
-        String updatedUser; // Should this be a object UpdatedUser updatedUser?
+//        String updatedUser;
 }
