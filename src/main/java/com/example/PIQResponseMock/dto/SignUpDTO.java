@@ -1,9 +1,11 @@
 package com.example.PIQResponseMock.dto;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
 
 @Data
-public class UserDTO {
+@AllArgsConstructor
+public class SignUpDTO {
     String firstName;
     String lastName;
     String dob;
@@ -15,4 +17,5 @@ public class UserDTO {
     String zip;
     String phone;
     String email;
+    String password;
 }

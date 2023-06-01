@@ -1,7 +1,9 @@
 package com.example.PIQResponseMock.services;
 
+import com.example.PIQResponseMock.controllers.AuthController;
 import com.example.PIQResponseMock.dto.*;
 import com.example.PIQResponseMock.loggers.VerifyUserLog;
+import com.example.PIQResponseMock.models.User;
 import com.example.PIQResponseMock.responses.*;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -9,8 +11,13 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class IntegrationApiService {
+
+    AuthController authController = new AuthController();
+
     public ResponseEntity<VerifyUserResponse> verifyUser(VerifyUserDTO verifyUserDTO) {
 
+
+        //create a response with the details of the user found above.
         VerifyUserResponse verifyUserResponse = new VerifyUserResponse(
                 "JonasEUR",
                 true,
