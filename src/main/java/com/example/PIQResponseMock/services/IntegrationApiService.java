@@ -8,6 +8,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import java.util.UUID;
+
 @Service
 public class IntegrationApiService {
     UserRepository userRepository = new UserRepository();
@@ -78,43 +80,40 @@ public class IntegrationApiService {
     }
 
     public ResponseEntity<AuthorizeResponse> authorize(AuthorizeDTO authorizeDTO) {
-        //Need the the userId which we have, and also the sessionId some how. Maybe fetch the user,
         User user = userRepository.getUserById(authorizeDTO.getUserId());
-        //and check for an existing session
-        boolean userSession = userService.authUser(authorizeDTO.getUserId(), user.getSessionId);
+        //boolean userActivated = userService.checkIfUserActive(authorizeDTO.getUserId());
 
-        //If CC Withdrawal
         if (authorizeDTO.getTxTypeId().equals("creditcardWithdrawal")) {
-
-            boolean userActivated = userService.checkIfUserActive(authorizeDTO.getUserId());
-            boolean hasEnoughFunds = userService.checkBalance(authorizeDTO.getUserId(), authorizeDTO.getTxAmount());
+            if (userService.checkBalance(authorizeDTO.getUserId(), authorizeDTO.getTxAmount())) {
+                AuthorizeResponse authorizeResponse = new AuthorizeResponse(
+                        user.getUserId(),
+                        true,
+                        UUID.randomUUID().toString());
+                return new ResponseEntity(authorizeResponse, HttpStatus.OK);
+            } else {
+                AuthorizeResponse authorizeResponse = new AuthorizeResponse(
+                        user.getUserId(),
+                        false,
+                        UUID.randomUUID().toString(),
+                        01,
+                        "Not enough funds");
+                return new ResponseEntity(authorizeResponse, HttpStatus.OK);
+            }
+        } else if (authorizeDTO.getTxTypeId().equals("creditcardDeposit")) {
             AuthorizeResponse authorizeResponse = new AuthorizeResponse(
-                    "JonasEUR",
+                    user.getUserId(),
                     true,
-                    1234,
-                    "01010",
-                    23,
-                    "Something went wrong"
-            );
-            return new ResponseEntity(authorizeResponse, HttpStatus.OK);
-
-        }
-        //If CC Deposit
-        else if (authorizeDTO.getTxTypeId().equals("creditcardDeposit")) {
-            boolean userActivated = userService.checkIfUserActive(authorizeDTO.getUserId());
-
-            //build response
-            AuthorizeResponse authorizeResponse = new AuthorizeResponse(
-                    "JonasEUR",
-                    true,
-                    1234,
-                    "01010",
-                    23,
-                    "Something went wrong"
-            );
+                    UUID.randomUUID().toString());
             return new ResponseEntity(authorizeResponse, HttpStatus.OK);
         }
 
+        AuthorizeResponse authorizeResponse = new AuthorizeResponse(
+                user.getUserId(),
+                false,
+                UUID.randomUUID().toString(),
+                02,
+                "User is blocked");
+        return new ResponseEntity(authorizeResponse, HttpStatus.OK);
     }
 
     public ResponseEntity<TransferResponse> transfer(TransferDTO transferDTO) {

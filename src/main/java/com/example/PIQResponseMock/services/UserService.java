@@ -66,7 +66,6 @@ public class UserService {
     }
 
     public boolean checkBalance(String userId, String txAmount) {
-        //convert the incoming txAmount string to an int.
         int convertedAmount;
         try {
             convertedAmount = Integer.parseInt(txAmount);
@@ -74,10 +73,8 @@ public class UserService {
             convertedAmount = 0;
         }
 
-        //find the user
         User user = userRepository.getUserById(userId);
 
-        //check that the user has enough funds
         if (user.getBalance() >= convertedAmount) {
             return true;
         } else return false;
