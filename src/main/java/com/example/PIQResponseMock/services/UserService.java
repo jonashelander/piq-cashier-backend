@@ -1,6 +1,6 @@
 package com.example.PIQResponseMock.services;
 
-import com.example.PIQResponseMock.Repositories.UserRepository;
+import com.example.PIQResponseMock.repositories.UserRepository;
 import com.example.PIQResponseMock.dto.AuthDTO;
 import com.example.PIQResponseMock.dto.SignInDTO;
 import com.example.PIQResponseMock.dto.SignUpDTO;
@@ -57,8 +57,6 @@ public class UserService {
         userRepository.updateUserById(user);
     }
 
-    //Find the user by userId and match the session towards the one active in the frontend
-    //Return true if it matches, false if not
     public boolean authUser(AuthDTO authDTO) {
         User user = userRepository.getUserById(authDTO.getUserId());
         if (user.getSessionId().equals(authDTO.getSessionId())) {
@@ -67,4 +65,21 @@ public class UserService {
         return false;
     }
 
+    public boolean checkBalance(String userId, String txAmount) {
+        //convert the incoming txAmount string to an int.
+        int convertedAmount;
+        try {
+            convertedAmount = Integer.parseInt(txAmount);
+        } catch (NumberFormatException e) {
+            convertedAmount = 0;
+        }
+
+        //find the user
+        User user = userRepository.getUserById(userId);
+
+        //check that the user has enough funds
+        if (user.getBalance() >= convertedAmount) {
+            return true;
+        } else return false;
+    }
 }

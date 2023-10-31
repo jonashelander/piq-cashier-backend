@@ -1,8 +1,7 @@
 package com.example.PIQResponseMock.services;
 
-import com.example.PIQResponseMock.controllers.AuthController;
+import com.example.PIQResponseMock.repositories.UserRepository;
 import com.example.PIQResponseMock.dto.*;
-import com.example.PIQResponseMock.loggers.VerifyUserLog;
 import com.example.PIQResponseMock.models.User;
 import com.example.PIQResponseMock.responses.*;
 import org.springframework.http.HttpStatus;
@@ -11,57 +10,111 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class IntegrationApiService {
+    UserRepository userRepository = new UserRepository();
+    UserService userService = new UserService();
 
-    AuthController authController = new AuthController();
+    public VerifyUserResponse buildVerifyUserResponse(VerifyUserDTO verifyUserDTO) {
+        User user = userRepository.getUserById(verifyUserDTO.getUserId());
+        AuthDTO authDTO = new AuthDTO(user.getUserId(), user.getSessionId());
+        boolean activeSession = userService.authUser(authDTO);
+
+        if (activeSession) {
+            return new VerifyUserResponse(
+                    user.getUserId(),
+                    activeSession,
+                    user.getUserCat(),
+                    user.getKycStatus(),
+                    user.getSex(),
+                    user.getFirstName(),
+                    user.getLastName(),
+                    user.getStreet(),
+                    user.getCity(),
+                    user.getState(),
+                    user.getZip(),
+                    user.getCountry(),
+                    user.getEmail(),
+                    user.getDob(),
+                    user.getPhone(),
+                    user.getBalance(),
+                    user.getBalanceCy(),
+                    "sv_SE",
+                    new Attributes(
+                            "something1",
+                            "something2"
+                    )
+            );
+        } else
+            return new VerifyUserResponse(
+                    user.getUserId(),
+                    activeSession,
+                    user.getUserCat(),
+                    user.getKycStatus(),
+                    user.getSex(),
+                    user.getFirstName(),
+                    user.getLastName(),
+                    user.getStreet(),
+                    user.getCity(),
+                    user.getState(),
+                    user.getZip(),
+                    user.getCountry(),
+                    user.getEmail(),
+                    user.getDob(),
+                    user.getPhone(),
+                    user.getBalance(),
+                    user.getBalanceCy(),
+                    "sv_SE",
+                    new Attributes(
+                            "something1",
+                            "something2"
+                    ),
+                    01,
+                    "User not verified"
+            );
+    }
 
     public ResponseEntity<VerifyUserResponse> verifyUser(VerifyUserDTO verifyUserDTO) {
-
-
-        //create a response with the details of the user found above.
-        VerifyUserResponse verifyUserResponse = new VerifyUserResponse(
-                "JonasEUR",
-                true,
-                "VIP_SE",
-                "VIP",
-                "MALE",
-                "Jonas",
-                "Helander",
-                "Praktejdervägen 13",
-                "Stockholm",
-                "sthml",
-                "18461",
-                "SWE",
-                "helanderjonas@gmail.com",
-                "1987-06-29",
-                "070-9660528",
-                100.5,
-                "EUR",
-                "sv_SE",
-                new Attributes(
-                        "something1",
-                        "something2"
-                ),
-                "true",
-                404,
-                "USER_NOT_FOUND"
-
-        );
-        VerifyUserLog verifyUserLog = new VerifyUserLog(verifyUserDTO.getSessionId(), verifyUserDTO.getUserId());
-
+        VerifyUserResponse verifyUserResponse = buildVerifyUserResponse(verifyUserDTO);
         return new ResponseEntity<>(verifyUserResponse, HttpStatus.OK);
     }
 
     public ResponseEntity<AuthorizeResponse> authorize(AuthorizeDTO authorizeDTO) {
+        //Need the the userId which we have, and also the sessionId some how. Maybe fetch the user,
+        User user = userRepository.getUserById(authorizeDTO.getUserId());
+        //and check for an existing session
+        boolean userSession = userService.authUser(authorizeDTO.getUserId(), user.getSessionId);
 
-        AuthorizeResponse authorizeResponse = new AuthorizeResponse(
-                "JonasEUR",
-                true,
-                1234,
-                "01010",
-                23,
-                "Something went wrong"
-        );
-        return new ResponseEntity(authorizeResponse, HttpStatus.OK);
+        //If CC Withdrawal
+        if (authorizeDTO.getTxTypeId().equals("creditcardWithdrawal")) {
+
+            boolean userActivated = userService.checkIfUserActive(authorizeDTO.getUserId());
+            boolean hasEnoughFunds = userService.checkBalance(authorizeDTO.getUserId(), authorizeDTO.getTxAmount());
+            AuthorizeResponse authorizeResponse = new AuthorizeResponse(
+                    "JonasEUR",
+                    true,
+                    1234,
+                    "01010",
+                    23,
+                    "Something went wrong"
+            );
+            return new ResponseEntity(authorizeResponse, HttpStatus.OK);
+
+        }
+        //If CC Deposit
+        else if (authorizeDTO.getTxTypeId().equals("creditcardDeposit")) {
+            boolean userActivated = userService.checkIfUserActive(authorizeDTO.getUserId());
+
+            //build response
+            AuthorizeResponse authorizeResponse = new AuthorizeResponse(
+                    "JonasEUR",
+                    true,
+                    1234,
+                    "01010",
+                    23,
+                    "Something went wrong"
+            );
+            return new ResponseEntity(authorizeResponse, HttpStatus.OK);
+        }
+
     }
 
     public ResponseEntity<TransferResponse> transfer(TransferDTO transferDTO) {

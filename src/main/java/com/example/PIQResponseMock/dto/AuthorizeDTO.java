@@ -8,9 +8,10 @@ public class AuthorizeDTO {
     String userId;
     String txAmount;
     String txAmountCy;
+    String txId;
     String txTypeId;
     String txName;
-    String Provider;
+    String provider;
     String pspService;
     String originTxId;
     String accountId;

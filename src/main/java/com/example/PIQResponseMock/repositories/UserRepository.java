@@ -1,4 +1,4 @@
-package com.example.PIQResponseMock.Repositories;
+package com.example.PIQResponseMock.repositories;
 
 import com.example.PIQResponseMock.dto.SignInDTO;
 import com.example.PIQResponseMock.models.User;

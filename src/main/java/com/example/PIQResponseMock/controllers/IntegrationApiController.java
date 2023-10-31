@@ -21,7 +21,6 @@ public class IntegrationApiController {
 
     @PostMapping("/verifyuser")
     public ResponseEntity<VerifyUserResponse> verifyUser(@RequestBody VerifyUserDTO verifyUserDTO) {
-
         return integrationApiService.verifyUser(verifyUserDTO);
     }
 
