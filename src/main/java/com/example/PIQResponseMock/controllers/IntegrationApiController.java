@@ -5,6 +5,7 @@ import com.example.PIQResponseMock.responses.*;
 import com.example.PIQResponseMock.services.IntegrationApiService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.json.GsonBuilderUtils;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
@@ -18,6 +19,10 @@ public class IntegrationApiController {
 
     IntegrationApiService integrationApiService = new IntegrationApiService();
 
+    @PostMapping("/hello")
+    public String helloWorld() {
+        return "Hello World!";
+    }
 
     @PostMapping("/verifyuser")
     public ResponseEntity<VerifyUserResponse> verifyUser(@RequestBody VerifyUserDTO verifyUserDTO) {
@@ -25,7 +30,7 @@ public class IntegrationApiController {
     }
 
     @PostMapping("/authorize")
-    public ResponseEntity<AuthorizeResponse> authorize(AuthorizeDTO authorizeDTO) {
+    public ResponseEntity<AuthorizeResponse> authorize(@RequestBody AuthorizeDTO authorizeDTO) {
         return integrationApiService.authorize(authorizeDTO);
     }
 

@@ -11,6 +11,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import java.util.Objects;
 import java.util.UUID;
 
 //REFACTOR TO RETURN RESPONSE ENTITY ALREADY IN SERVICE ON ALL METHODS
@@ -18,7 +19,6 @@ import java.util.UUID;
 public class UserService {
     UserRepository userRepository = new UserRepository();
 
-    //Creates a new user with inputs from the frontend
     public UserDTO signUp(SignUpDTO signUpDTO) {
         User user = new User(
                 signUpDTO.getFirstName(),
@@ -39,7 +39,6 @@ public class UserService {
         return userDTO;
     }
 
-    //Finds the user and creates a new session.
     public ResponseEntity<UserDTO> signIn(SignInDTO signInDTO) {
         User user = userRepository.getUserBySignInDTO(signInDTO);
 
@@ -53,13 +52,16 @@ public class UserService {
     public void signOut(String userId) {
         User user = userRepository.getUserById(userId);
         user.setSessionId(null);
-        //Update user in database
         userRepository.updateUserById(user);
     }
 
     public boolean authUser(AuthDTO authDTO) {
         User user = userRepository.getUserById(authDTO.getUserId());
-        if (user.getSessionId().equals(authDTO.getSessionId())) {
+        if (user.getSessionId() == null) {
+            return false;
+        } else if (!user.getSessionId().equals(authDTO.getSessionId())) {
+            return false;
+        } else if (user.getSessionId().equals(authDTO.getSessionId())) {
             return true;
         }
         return false;
@@ -74,8 +76,9 @@ public class UserService {
         }
 
         User user = userRepository.getUserById(userId);
+        int result = user.getBalance() - convertedAmount;
 
-        if (user.getBalance() >= convertedAmount) {
+        if (result >= 0) {
             return true;
         } else return false;
     }

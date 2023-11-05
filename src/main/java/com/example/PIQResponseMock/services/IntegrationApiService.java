@@ -4,6 +4,7 @@ import com.example.PIQResponseMock.repositories.UserRepository;
 import com.example.PIQResponseMock.dto.*;
 import com.example.PIQResponseMock.models.User;
 import com.example.PIQResponseMock.responses.*;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -15,15 +16,23 @@ public class IntegrationApiService {
     UserRepository userRepository = new UserRepository();
     UserService userService = new UserService();
 
+/*    @Autowired
+    public IntegrationApiService() {
+        this.userRepository = userRepository;
+        this.userService = userService;
+    }*/
+
     public VerifyUserResponse buildVerifyUserResponse(VerifyUserDTO verifyUserDTO) {
         User user = userRepository.getUserById(verifyUserDTO.getUserId());
         AuthDTO authDTO = new AuthDTO(user.getUserId(), user.getSessionId());
-        boolean activeSession = userService.authUser(authDTO);
+        //boolean isBlocked = userService.checkIfUserActive(authorizeDTO.getUserId());
+        boolean sessionActive = userService.authUser(authDTO);
 
-        if (activeSession) {
+        //add logic to check sessionId
+        if (sessionActive) {
             return new VerifyUserResponse(
                     user.getUserId(),
-                    activeSession,
+                    true,
                     user.getUserCat(),
                     user.getKycStatus(),
                     user.getSex(),
@@ -48,7 +57,7 @@ public class IntegrationApiService {
         } else
             return new VerifyUserResponse(
                     user.getUserId(),
-                    activeSession,
+                    false,
                     user.getUserCat(),
                     user.getKycStatus(),
                     user.getSex(),
@@ -68,9 +77,9 @@ public class IntegrationApiService {
                     new Attributes(
                             "something1",
                             "something2"
-                    ),
+                    )/*,
                     01,
-                    "User not verified"
+                    "User not verified"*/
             );
     }
 
@@ -80,10 +89,11 @@ public class IntegrationApiService {
     }
 
     public ResponseEntity<AuthorizeResponse> authorize(AuthorizeDTO authorizeDTO) {
+        System.out.println(authorizeDTO);
         User user = userRepository.getUserById(authorizeDTO.getUserId());
-        //boolean userActivated = userService.checkIfUserActive(authorizeDTO.getUserId());
+        //boolean isBlocked = userService.checkIfUserActive(authorizeDTO.getUserId());
 
-        if (authorizeDTO.getTxTypeId().equals("creditcardWithdrawal")) {
+        if (authorizeDTO.getTxName().equals("CreditcardWithdrawal")) {
             if (userService.checkBalance(authorizeDTO.getUserId(), authorizeDTO.getTxAmount())) {
                 AuthorizeResponse authorizeResponse = new AuthorizeResponse(
                         user.getUserId(),
@@ -91,15 +101,16 @@ public class IntegrationApiService {
                         UUID.randomUUID().toString());
                 return new ResponseEntity(authorizeResponse, HttpStatus.OK);
             } else {
+
                 AuthorizeResponse authorizeResponse = new AuthorizeResponse(
                         user.getUserId(),
                         false,
                         UUID.randomUUID().toString(),
-                        01,
+                        1,
                         "Not enough funds");
                 return new ResponseEntity(authorizeResponse, HttpStatus.OK);
             }
-        } else if (authorizeDTO.getTxTypeId().equals("creditcardDeposit")) {
+        } else if (authorizeDTO.getTxName().equals("CreditcardDeposit")) {
             AuthorizeResponse authorizeResponse = new AuthorizeResponse(
                     user.getUserId(),
                     true,

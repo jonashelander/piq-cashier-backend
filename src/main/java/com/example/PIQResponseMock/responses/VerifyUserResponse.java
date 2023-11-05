@@ -1,13 +1,31 @@
 package com.example.PIQResponseMock.responses;
 
-import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 
 @Data
-@AllArgsConstructor
-@NoArgsConstructor
 public class VerifyUserResponse {
+
+    String userId;
+    boolean success;
+    String userCat;
+    String kycStatus;
+    String sex;
+    String firstName;
+    String lastName;
+    String street;
+    String city;
+    String state;
+    String zip;
+    String country;
+    String email;
+    String dob;
+    String mobile;
+    double balance;
+    String balanceCy;
+    String locale;
+    Attributes attributes;
+/*    int errCode = 0;
+    String errMsg = "No errors this time!";*/
 
     public VerifyUserResponse(String userId, boolean success, String kycStatus) {
         this.userId = userId;
@@ -36,28 +54,6 @@ public class VerifyUserResponse {
         this.locale = locale;
         this.attributes = attributes;
     }
-
-    String userId;
-    boolean success;
-    String userCat;
-    String kycStatus;
-    String sex;
-    String firstName;
-    String lastName;
-    String street;
-    String city;
-    String state;
-    String zip;
-    String country;
-    String email;
-    String dob;
-    String mobile;
-    double balance;
-    String balanceCy;
-    String locale;
-    Attributes attributes;
-    int errCode;
-    String errMsg;
 }
 
 

@@ -17,7 +17,6 @@ public class PiqResponseMockApplication {
     public static void main(String[] args) {
         SpringApplication.run(PiqResponseMockApplication.class, args);
         UserService userService = new UserService();
-        UserRepository userRepository = new UserRepository();
 
         SignUpDTO user = new SignUpDTO(
                 "Jonas",
@@ -30,12 +29,11 @@ public class PiqResponseMockApplication {
                 "Praktejdervägen 13",
                 "184 61",
                 "+46709660528",
-                "user",
+                "user@gmail.com",
                 "pass"
         );
 
         userService.signUp(user);
-        userRepository.findAll();
     }
 
 /*    @Bean

@@ -8,8 +8,8 @@ import java.util.UUID;
 public class User {
     String userId;
     String sessionId;
-    String userCat;
-    String kycStatus;
+    String userCat = "VIP";
+    String kycStatus = "Verified";
     int balance = 200;
     String balanceCy = "EUR";
     String firstName;
