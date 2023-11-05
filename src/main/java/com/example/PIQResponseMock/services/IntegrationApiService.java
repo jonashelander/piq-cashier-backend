@@ -24,11 +24,11 @@ public class IntegrationApiService {
 
     public VerifyUserResponse buildVerifyUserResponse(VerifyUserDTO verifyUserDTO) {
         User user = userRepository.getUserById(verifyUserDTO.getUserId());
-        AuthDTO authDTO = new AuthDTO(user.getUserId(), user.getSessionId());
-        //boolean isBlocked = userService.checkIfUserActive(authorizeDTO.getUserId());
+        AuthDTO authDTO = new AuthDTO(verifyUserDTO.getUserId(), verifyUserDTO.getSessionId());
         boolean sessionActive = userService.authUser(authDTO);
+        System.out.println(sessionActive);
+        boolean isblocked = userService.checkIfBlocked(verifyUserDTO.getUserId());
 
-        //add logic to check sessionId
         if (sessionActive) {
             return new VerifyUserResponse(
                     user.getUserId(),
@@ -54,7 +54,7 @@ public class IntegrationApiService {
                             "something2"
                     )
             );
-        } else
+        } else if (isblocked) {
             return new VerifyUserResponse(
                     user.getUserId(),
                     false,
@@ -77,10 +77,37 @@ public class IntegrationApiService {
                     new Attributes(
                             "something1",
                             "something2"
-                    )/*,
-                    01,
-                    "User not verified"*/
+                    ),
+                    02,
+                    "The user is blocked"
             );
+        }
+        return new VerifyUserResponse(
+                user.getUserId(),
+                false,
+                user.getUserCat(),
+                user.getKycStatus(),
+                user.getSex(),
+                user.getFirstName(),
+                user.getLastName(),
+                user.getStreet(),
+                user.getCity(),
+                user.getState(),
+                user.getZip(),
+                user.getCountry(),
+                user.getEmail(),
+                user.getDob(),
+                user.getPhone(),
+                user.getBalance(),
+                user.getBalanceCy(),
+                "sv_SE",
+                new Attributes(
+                        "something1",
+                        "something2"
+                ),
+                01,
+                "No active session found"
+        );
     }
 
     public ResponseEntity<VerifyUserResponse> verifyUser(VerifyUserDTO verifyUserDTO) {

@@ -45,7 +45,6 @@ public class UserService {
         user.setSessionId(UUID.randomUUID().toString());
         UserDTO userDTO = Converter.convertUserToDTO(user);
 
-        System.out.println(userDTO);
         return new ResponseEntity<>(userDTO, HttpStatus.OK);
     }
 
@@ -55,13 +54,13 @@ public class UserService {
         userRepository.updateUserById(user);
     }
 
+    //Strings are most likely not matched correctly, since it will return true even if the sessionId's does not match.
     public boolean authUser(AuthDTO authDTO) {
         User user = userRepository.getUserById(authDTO.getUserId());
         if (user.getSessionId() == null) {
             return false;
-        } else if (!user.getSessionId().equals(authDTO.getSessionId())) {
-            return false;
         } else if (user.getSessionId().equals(authDTO.getSessionId())) {
+            System.out.println(user.getSessionId() + " = " + authDTO.getSessionId());
             return true;
         }
         return false;
@@ -81,5 +80,13 @@ public class UserService {
         if (result >= 0) {
             return true;
         } else return false;
+    }
+
+    public boolean checkIfBlocked(String userId) {
+        User user = userRepository.getUserById(userId);
+        if (user.isBlocked()) {
+            return true;
+        }
+        return false;
     }
 }

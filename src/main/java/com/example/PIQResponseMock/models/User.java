@@ -2,7 +2,6 @@ package com.example.PIQResponseMock.models;
 
 import lombok.Data;
 
-import java.util.UUID;
 
 @Data
 public class User {
@@ -24,6 +23,7 @@ public class User {
     String phone;
     String email;
     String password;
+    boolean isBlocked = false;
 
     public User(String firstName, String lastName, String dob, String sex, String country, String city, String state, String street, String zip, String phone, String email, String password) {
         this.userId = "JonasEUR";
