@@ -109,7 +109,6 @@ public class IntegrationApiService {
     }
 
     public ResponseEntity<AuthorizeResponse> authorize(AuthorizeDTO authorizeDTO) {
-        System.out.println(authorizeDTO);
         User user = userRepository.getUserById(authorizeDTO.getUserId());
         //boolean isBlocked = userService.checkIfUserActive(authorizeDTO.getUserId());
 
@@ -121,7 +120,6 @@ public class IntegrationApiService {
                         UUID.randomUUID().toString());
                 return new ResponseEntity(authorizeResponse, HttpStatus.OK);
             } else {
-
                 AuthorizeResponse authorizeResponse = new AuthorizeResponse(
                         user.getUserId(),
                         false,
@@ -148,13 +146,21 @@ public class IntegrationApiService {
     }
 
     public ResponseEntity<TransferResponse> transfer(TransferDTO transferDTO) {
+        User user = userRepository.getUserById(transferDTO.getUserId());
+        System.out.println("Balance BEFORE change: " + user.getBalance());
+        int convertedTxAmount;
+        try {
+            convertedTxAmount = Integer.parseInt(transferDTO.getTxAmount());
+        } catch (NumberFormatException e) {
+            convertedTxAmount = 0;
+        }
+        user.setBalance(user.getBalance() + convertedTxAmount);
+        System.out.println("Balance AFTER change: " + user.getBalance());
+
         TransferResponse transferResponse = new TransferResponse(
-                "JonasEUR",
+                user.getUserId(),
                 true,
-                "12345",
-                54321,
-                401,
-                "Bad program"
+                transferDTO.getTxId()
         );
         return new ResponseEntity(transferResponse, HttpStatus.OK);
     }
