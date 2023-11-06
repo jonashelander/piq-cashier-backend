@@ -37,4 +37,14 @@ public class AuthController {
         Boolean userAuthenticated = userService.authUser(authDTO);
         return ResponseEntity.ok().body(userAuthenticated);
     }
+
+    @PostMapping("/block/{userId}")
+    public ResponseEntity<Boolean> blockUser(@PathVariable String userId) {
+        return userService.blockUser(userId);
+    }
+
+    @PostMapping("/unblock/{userId}")
+    public ResponseEntity<Boolean> unBlockUser(@PathVariable String userId) {
+        return userService.unBlockUser(userId);
+    }
 }

@@ -16,20 +16,13 @@ public class IntegrationApiService {
     UserRepository userRepository = new UserRepository();
     UserService userService = new UserService();
 
-/*    @Autowired
-    public IntegrationApiService() {
-        this.userRepository = userRepository;
-        this.userService = userService;
-    }*/
-
     public VerifyUserResponse buildVerifyUserResponse(VerifyUserDTO verifyUserDTO) {
         User user = userRepository.getUserById(verifyUserDTO.getUserId());
         AuthDTO authDTO = new AuthDTO(verifyUserDTO.getUserId(), verifyUserDTO.getSessionId());
         boolean sessionActive = userService.authUser(authDTO);
-        System.out.println(sessionActive);
         boolean isblocked = userService.checkIfBlocked(verifyUserDTO.getUserId());
 
-        if (sessionActive) {
+        if (sessionActive && !isblocked) {
             return new VerifyUserResponse(
                     user.getUserId(),
                     true,

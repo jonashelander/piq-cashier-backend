@@ -11,10 +11,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
-import java.util.Objects;
 import java.util.UUID;
 
-//REFACTOR TO RETURN RESPONSE ENTITY ALREADY IN SERVICE ON ALL METHODS
 @Service
 public class UserService {
     UserRepository userRepository = new UserRepository();
@@ -54,13 +52,11 @@ public class UserService {
         userRepository.updateUserById(user);
     }
 
-    //Strings are most likely not matched correctly, since it will return true even if the sessionId's does not match.
     public boolean authUser(AuthDTO authDTO) {
         User user = userRepository.getUserById(authDTO.getUserId());
         if (user.getSessionId() == null) {
             return false;
         } else if (user.getSessionId().equals(authDTO.getSessionId())) {
-            System.out.println(user.getSessionId() + " = " + authDTO.getSessionId());
             return true;
         }
         return false;
@@ -77,16 +73,25 @@ public class UserService {
         User user = userRepository.getUserById(userId);
         int result = user.getBalance() - convertedAmount;
 
-        if (result >= 0) {
-            return true;
-        } else return false;
+        return result >= 0;
     }
 
     public boolean checkIfBlocked(String userId) {
         User user = userRepository.getUserById(userId);
-        if (user.isBlocked()) {
-            return true;
-        }
-        return false;
+        return user.isBlocked();
+    }
+
+    public ResponseEntity<Boolean> blockUser(String userId) {
+        User user = userRepository.getUserById(userId);
+        user.setBlocked(true);
+
+        return new ResponseEntity<>(user.isBlocked(), HttpStatus.OK);
+    }
+
+    public ResponseEntity<Boolean> unBlockUser(String userId) {
+        User user = userRepository.getUserById(userId);
+
+        user.setBlocked(false);
+        return new ResponseEntity<>(user.isBlocked(), HttpStatus.OK);
     }
 }

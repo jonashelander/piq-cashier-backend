@@ -3,12 +3,9 @@ package com.example.PIQResponseMock.controllers;
 import com.example.PIQResponseMock.dto.*;
 import com.example.PIQResponseMock.responses.*;
 import com.example.PIQResponseMock.services.IntegrationApiService;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.http.converter.json.GsonBuilderUtils;
 import org.springframework.web.bind.annotation.*;
 
-import java.time.LocalDateTime;
 
 
 @CrossOrigin(origins = "*", allowedHeaders = "*")
