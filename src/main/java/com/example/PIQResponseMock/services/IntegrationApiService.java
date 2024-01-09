@@ -4,7 +4,6 @@ import com.example.PIQResponseMock.repositories.UserRepository;
 import com.example.PIQResponseMock.dto.*;
 import com.example.PIQResponseMock.models.User;
 import com.example.PIQResponseMock.responses.*;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -110,7 +109,6 @@ public class IntegrationApiService {
 
     public ResponseEntity<AuthorizeResponse> authorize(AuthorizeDTO authorizeDTO) {
         User user = userRepository.getUserById(authorizeDTO.getUserId());
-        //boolean isBlocked = userService.checkIfUserActive(authorizeDTO.getUserId());
 
         if (authorizeDTO.getTxName().equals("CreditcardWithdrawal")) {
             if (userService.checkBalance(authorizeDTO.getUserId(), authorizeDTO.getTxAmount())) {
@@ -147,7 +145,6 @@ public class IntegrationApiService {
 
     public ResponseEntity<TransferResponse> transfer(TransferDTO transferDTO) {
         User user = userRepository.getUserById(transferDTO.getUserId());
-        System.out.println("Balance BEFORE change: " + user.getBalance());
         int convertedTxAmount;
         try {
             convertedTxAmount = Integer.parseInt(transferDTO.getTxAmount());
@@ -155,8 +152,6 @@ public class IntegrationApiService {
             convertedTxAmount = 0;
         }
         user.setBalance(user.getBalance() + convertedTxAmount);
-        System.out.println("Balance AFTER change: " + user.getBalance());
-
         TransferResponse transferResponse = new TransferResponse(
                 user.getUserId(),
                 true,

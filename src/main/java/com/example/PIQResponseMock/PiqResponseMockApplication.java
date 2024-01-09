@@ -16,6 +16,7 @@ public class PiqResponseMockApplication {
 
     public static void main(String[] args) {
         SpringApplication.run(PiqResponseMockApplication.class, args);
+
         UserService userService = new UserService();
         UserRepository userRepository = new UserRepository();
 
