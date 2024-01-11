@@ -14,7 +14,7 @@ COPY src ./src
 RUN mvn clean package -DskipTests
 
 # Create a new image with the full JDK
-FROM eclipse-temurin:17
+FROM openjdk:17-slim
 
 # Set the working directory in the container
 WORKDIR /app
