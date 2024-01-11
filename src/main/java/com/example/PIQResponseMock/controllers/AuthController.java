@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping(path = "/user", produces = "application/json;charset=utf8")
 public class AuthController {
-
+    //test comment
     UserService userService = new UserService();
 
     @PostMapping("/signup")
