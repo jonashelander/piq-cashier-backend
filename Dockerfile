@@ -1,5 +1,5 @@
 # Use the official Maven image as a base image
-FROM maven:3.8.4-openjdk-17-slim AS build
+FROM maven:3.8.4-openjdk-17 AS build
 
 # Set the working directory in the container
 WORKDIR /app
@@ -14,7 +14,7 @@ COPY src ./src
 RUN mvn clean package -DskipTests
 
 # Create a new image with the JRE only
-FROM adoptopenjdk:17-jre-hotspot
+FROM eclipse-temurin:11
 
 # Set the working directory in the container
 WORKDIR /app
