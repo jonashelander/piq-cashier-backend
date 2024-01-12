@@ -9,7 +9,7 @@
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
     <groupId>com.example</groupId>
-    <artifactId>PIQResponseMock</artifactId>
+    <artifactId>piqCashier</artifactId>
     <version>0.0.1-SNAPSHOT</version>
     <name>PIQ Response Mock</name>
     <description>Mocked responses for PIQ</description>

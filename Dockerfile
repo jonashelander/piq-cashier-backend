@@ -1,8 +1,29 @@
-FROM maven:3.8.4-openjdk-17 AS build
-COPY . .
+# Use the official Maven image as a base image
+FROM maven:3.8.4-openjdk-17-slim AS build
+
+# Set the working directory in the container
+WORKDIR /app
+
+# Copy the Maven project file
+COPY pom.xml .
+
+# Copy the source code
+COPY src ./src
+
+# Build the application
 RUN mvn clean package -DskipTests
 
-FROM eclipse-temurin:11
-COPY --from=build /target/piq_response_mock-0.0.1-SNAPSHOT.jar piq_response_mock.jar
+# Create a new image with the full JDK
+FROM openjdk:17-slim
+
+# Set the working directory in the container
+WORKDIR /app
+
+# Copy the JAR file from the build stage
+COPY --from=build /app/target/*.jar ./app.jar
+
+# Expose the port your Spring Boot application runs on
 EXPOSE 8080
-ENTRYPOINT ["java","-jar","piq_response_mock.jar"]
+
+# Define the command to run your application
+CMD ["java", "-jar", "app.jar"]
