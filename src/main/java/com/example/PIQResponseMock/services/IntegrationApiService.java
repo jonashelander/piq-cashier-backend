@@ -21,7 +21,12 @@ public class IntegrationApiService {
         boolean isblocked = authService.checkIfBlocked(verifyUserDTO.getUserId());
 
         boolean sessionActive;
-        if (authService.authUser(authDTO).getStatusCode().equals(200)) {
+
+        HttpStatus a = authService.authUser(authDTO).getStatusCode();
+        HttpStatus b = org.springframework.http.HttpStatus.OK;
+        System.out.println(a==b);
+
+        if (authService.authUser(authDTO).getStatusCode().equals(org.springframework.http.HttpStatus.OK)) {
             sessionActive = true;
         } else sessionActive = false;
 
