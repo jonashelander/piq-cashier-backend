@@ -154,6 +154,7 @@ public class IntegrationApiService {
     }
 
     public ResponseEntity<TransferResponse> transfer(TransferDTO transferDTO) {
+        System.out.println(transferDTO);
         User user = userRepository.getUserById(transferDTO.getUserId());
         int convertedTxAmount;
         try {
