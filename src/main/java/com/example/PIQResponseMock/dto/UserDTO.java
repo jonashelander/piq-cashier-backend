@@ -20,6 +20,6 @@ public class UserDTO {
     String zip;
     String phone;
     String email;
-    int balance;
+    double balance;
     String balanceCy;
 }

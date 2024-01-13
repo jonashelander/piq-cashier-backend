@@ -70,7 +70,7 @@ public class AuthService {
         }
 
         User user = userRepository.getUserById(userId);
-        int result = user.getBalance() - convertedAmount;
+        double result = user.getBalance() - convertedAmount;
 
         return result >= 0;
     }

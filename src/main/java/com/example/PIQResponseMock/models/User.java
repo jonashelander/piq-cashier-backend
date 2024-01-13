@@ -11,7 +11,7 @@ public class User {
     String sessionId;
     String userCat = "VIP";
     String kycStatus = "Verified";
-    int balance = 0;
+    double balance = 0;
     String balanceCy = "EUR";
     String firstName;
     String lastName;

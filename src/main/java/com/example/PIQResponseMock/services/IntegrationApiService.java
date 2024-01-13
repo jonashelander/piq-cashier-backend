@@ -156,9 +156,10 @@ public class IntegrationApiService {
     public ResponseEntity<TransferResponse> transfer(TransferDTO transferDTO) {
         System.out.println(transferDTO);
         User user = userRepository.getUserById(transferDTO.getUserId());
-        int convertedTxAmount;
+        double convertedTxAmount;
         try {
-            convertedTxAmount = Integer.parseInt(transferDTO.getTxAmount());
+            convertedTxAmount = Double.parseDouble(transferDTO.getTxAmount());
+
         } catch (NumberFormatException e) {
             convertedTxAmount = 0;
         }
