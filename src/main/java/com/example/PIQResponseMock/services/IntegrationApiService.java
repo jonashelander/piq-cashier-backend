@@ -13,13 +13,18 @@ import java.util.UUID;
 @Service
 public class IntegrationApiService {
     UserRepository userRepository = new UserRepository();
-    UserService userService = new UserService();
+    AuthService authService = new AuthService();
 
     public VerifyUserResponse buildVerifyUserResponse(VerifyUserDTO verifyUserDTO) {
         User user = userRepository.getUserById(verifyUserDTO.getUserId());
         AuthDTO authDTO = new AuthDTO(verifyUserDTO.getUserId(), verifyUserDTO.getSessionId());
-        boolean sessionActive = userService.authUser(authDTO);
-        boolean isblocked = userService.checkIfBlocked(verifyUserDTO.getUserId());
+        boolean isblocked = authService.checkIfBlocked(verifyUserDTO.getUserId());
+
+        boolean sessionActive;
+        if (authService.authUser(authDTO).getStatusCode().equals(200)) {
+            sessionActive = true;
+        } else sessionActive = false;
+
 
         if (sessionActive && !isblocked) {
             return new VerifyUserResponse(
@@ -111,7 +116,7 @@ public class IntegrationApiService {
         User user = userRepository.getUserById(authorizeDTO.getUserId());
 
         if (authorizeDTO.getTxName().equals("CreditcardWithdrawal")) {
-            if (userService.checkBalance(authorizeDTO.getUserId(), authorizeDTO.getTxAmount())) {
+            if (authService.checkBalance(authorizeDTO.getUserId(), authorizeDTO.getTxAmount())) {
                 AuthorizeResponse authorizeResponse = new AuthorizeResponse(
                         user.getUserId(),
                         true,

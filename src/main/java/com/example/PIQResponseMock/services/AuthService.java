@@ -14,7 +14,7 @@ import org.springframework.stereotype.Service;
 import java.util.UUID;
 
 @Service
-public class UserService {
+public class AuthService {
     UserRepository userRepository = new UserRepository();
 
     public UserDTO signUp(SignUpDTO signUpDTO) {
@@ -52,14 +52,13 @@ public class UserService {
         userRepository.updateUserById(user);
     }
 
-    public boolean authUser(AuthDTO authDTO) {
+    public ResponseEntity authUser(AuthDTO authDTO) {
         User user = userRepository.getUserById(authDTO.getUserId());
-        if (user.getSessionId() == null) {
-            return false;
-        } else if (user.getSessionId().equals(authDTO.getSessionId())) {
-            return true;
+        if (user.getSessionId() == null || !user.getSessionId().equals(authDTO.getSessionId())) {
+            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
         }
-        return false;
+        UserDTO userDTO = Converter.convertUserToDTO(user);
+        return new ResponseEntity<>(userDTO, HttpStatus.OK);
     }
 
     public boolean checkBalance(String userId, String txAmount) {

@@ -4,7 +4,7 @@ import com.example.PIQResponseMock.dto.AuthDTO;
 import com.example.PIQResponseMock.dto.SignUpDTO;
 import com.example.PIQResponseMock.dto.SignInDTO;
 import com.example.PIQResponseMock.dto.UserDTO;
-import com.example.PIQResponseMock.services.UserService;
+import com.example.PIQResponseMock.services.AuthService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -13,38 +13,37 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping(path = "/user", produces = "application/json;charset=utf8")
 public class AuthController {
     //test comment
-    UserService userService = new UserService();
+    AuthService authService = new AuthService();
 
     @PostMapping("/signup")
     public ResponseEntity<UserDTO> signUp(@RequestBody SignUpDTO signUpDTO) {
-        UserDTO userDTO = userService.signUp(signUpDTO);
+        UserDTO userDTO = authService.signUp(signUpDTO);
 
         return ResponseEntity.ok().body(userDTO);
     }
 
     @PostMapping("/signin")
     public ResponseEntity<UserDTO> singIn(@RequestBody SignInDTO signInDTO) {
-        return userService.signIn(signInDTO);
+        return authService.signIn(signInDTO);
     }
 
     @PostMapping("/{userId}")
     public void signOut(@PathVariable("userId") String userId) {
-        userService.signOut(userId);
+        authService.signOut(userId);
     }
 
     @PostMapping("/auth")
     public ResponseEntity<Boolean> authenticateUser(@RequestBody AuthDTO authDTO) {
-        Boolean userAuthenticated = userService.authUser(authDTO);
-        return ResponseEntity.ok().body(userAuthenticated);
+        return authService.authUser(authDTO);
     }
 
     @PostMapping("/block/{userId}")
     public ResponseEntity<Boolean> blockUser(@PathVariable String userId) {
-        return userService.blockUser(userId);
+        return authService.blockUser(userId);
     }
 
     @PostMapping("/unblock/{userId}")
     public ResponseEntity<Boolean> unBlockUser(@PathVariable String userId) {
-        return userService.unBlockUser(userId);
+        return authService.unBlockUser(userId);
     }
 }

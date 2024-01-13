@@ -2,7 +2,7 @@ package com.example.PIQResponseMock;
 
 import com.example.PIQResponseMock.repositories.UserRepository;
 import com.example.PIQResponseMock.dto.SignUpDTO;
-import com.example.PIQResponseMock.services.UserService;
+import com.example.PIQResponseMock.services.AuthService;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 /*import springfox.documentation.builders.RequestHandlerSelectors;
@@ -17,7 +17,7 @@ public class PiqResponseMockApplication {
     public static void main(String[] args) {
         SpringApplication.run(PiqResponseMockApplication.class, args);
 
-        UserService userService = new UserService();
+        AuthService authService = new AuthService();
         UserRepository userRepository = new UserRepository();
 
         SignUpDTO user = new SignUpDTO(
@@ -35,7 +35,7 @@ public class PiqResponseMockApplication {
                 "pass"
         );
 
-        userService.signUp(user);
+        authService.signUp(user);
         userRepository.findAll();
     }
 
