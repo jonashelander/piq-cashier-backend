@@ -24,13 +24,9 @@ public class IntegrationApiService {
 
         HttpStatus a = authService.authUser(authDTO).getStatusCode();
         HttpStatus b = org.springframework.http.HttpStatus.OK;
-        System.out.println(a==b);
-
         if (authService.authUser(authDTO).getStatusCode().equals(org.springframework.http.HttpStatus.OK)) {
             sessionActive = true;
         } else sessionActive = false;
-
-
         if (sessionActive && !isblocked) {
             return new VerifyUserResponse(
                     user.getUserId(),
@@ -154,7 +150,6 @@ public class IntegrationApiService {
     }
 
     public ResponseEntity<TransferResponse> transfer(TransferDTO transferDTO) {
-        System.out.println(transferDTO);
         User user = userRepository.getUserById(transferDTO.getUserId());
         double convertedTxAmount;
         try {

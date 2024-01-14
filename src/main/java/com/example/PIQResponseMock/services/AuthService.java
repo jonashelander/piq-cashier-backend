@@ -62,16 +62,14 @@ public class AuthService {
     }
 
     public boolean checkBalance(String userId, String txAmount) {
-        int convertedAmount;
+        double convertedAmount;
         try {
-            convertedAmount = Integer.parseInt(txAmount);
+            convertedAmount = Double.parseDouble(txAmount);
         } catch (NumberFormatException e) {
-            convertedAmount = 0;
+            convertedAmount = 0.00;
         }
-
         User user = userRepository.getUserById(userId);
-        double result = user.getBalance() - convertedAmount;
-
+        double result = user.getBalance() + convertedAmount;
         return result >= 0;
     }
 
