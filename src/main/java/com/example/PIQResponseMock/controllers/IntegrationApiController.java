@@ -33,6 +33,7 @@ public class IntegrationApiController {
 
     @PostMapping("/transfer")
     public ResponseEntity<TransferResponse> transfer(@RequestBody TransferDTO transferDTO) {
+        System.out.println("TransferDTO: " + transferDTO);
         return integrationApiService.transfer(transferDTO);
 
     }

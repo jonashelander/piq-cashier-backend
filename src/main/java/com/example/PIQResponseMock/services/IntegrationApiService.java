@@ -18,16 +18,12 @@ public class IntegrationApiService {
     public VerifyUserResponse buildVerifyUserResponse(VerifyUserDTO verifyUserDTO) {
         User user = userRepository.getUserById(verifyUserDTO.getUserId());
         AuthDTO authDTO = new AuthDTO(verifyUserDTO.getUserId(), verifyUserDTO.getSessionId());
-        boolean isblocked = authService.checkIfBlocked(verifyUserDTO.getUserId());
-
+        boolean isBlocked = authService.checkIfBlocked(verifyUserDTO.getUserId());
         boolean sessionActive;
-
-        HttpStatus a = authService.authUser(authDTO).getStatusCode();
-        HttpStatus b = org.springframework.http.HttpStatus.OK;
         if (authService.authUser(authDTO).getStatusCode().equals(org.springframework.http.HttpStatus.OK)) {
             sessionActive = true;
         } else sessionActive = false;
-        if (sessionActive && !isblocked) {
+        if (sessionActive && !isBlocked) {
             return new VerifyUserResponse(
                     user.getUserId(),
                     true,
@@ -52,7 +48,7 @@ public class IntegrationApiService {
                             "something2"
                     )
             );
-        } else if (isblocked) {
+        } else if (isBlocked) {
             return new VerifyUserResponse(
                     user.getUserId(),
                     false,
