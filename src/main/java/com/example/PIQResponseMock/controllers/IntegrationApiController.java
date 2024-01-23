@@ -6,6 +6,7 @@ import com.example.PIQResponseMock.services.IntegrationApiService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDateTime;
 
 
 @CrossOrigin(origins = "*", allowedHeaders = "*")
@@ -33,7 +34,7 @@ public class IntegrationApiController {
 
     @PostMapping("/transfer")
     public ResponseEntity<TransferResponse> transfer(@RequestBody TransferDTO transferDTO) {
-        System.out.println("TransferDTO: " + transferDTO);
+        System.out.println("Transfer request received: " + LocalDateTime.now() + transferDTO);
         return integrationApiService.transfer(transferDTO);
 
     }
