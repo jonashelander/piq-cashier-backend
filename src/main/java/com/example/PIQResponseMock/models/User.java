@@ -9,7 +9,7 @@ import java.util.UUID;
 public class User {
     String userId;
     String sessionId;
-    String userCat = "VIP";
+    String userCat;
     String kycStatus = "Verified";
     double balance = 0;
     String balanceCy = "EUR";
@@ -25,9 +25,9 @@ public class User {
     String phone;
     String email;
     String password;
-    boolean isBlocked = false;
+    boolean activated;
 
-    public User(String firstName, String lastName, String dob, String sex, String country, String city, String state, String street, String zip, String phone, String email, String password) {
+    public User(String firstName, String lastName, String dob, String sex, String country, String city, String state, String street, String zip, String phone, String email, String password, boolean activated, String userCat) {
         this.userId = UUID.randomUUID().toString();
         this.firstName = firstName;
         this.lastName = lastName;
@@ -41,5 +41,7 @@ public class User {
         this.phone = phone;
         this.email = email;
         this.password = password;
+        this.activated = true;
+        this.userCat = userCat;
     }
 }

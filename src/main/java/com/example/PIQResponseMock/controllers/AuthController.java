@@ -4,13 +4,17 @@ import com.example.PIQResponseMock.dto.AuthDTO;
 import com.example.PIQResponseMock.dto.SignUpDTO;
 import com.example.PIQResponseMock.dto.SignInDTO;
 import com.example.PIQResponseMock.dto.UserDTO;
+import com.example.PIQResponseMock.models.User;
 import com.example.PIQResponseMock.services.AuthService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @CrossOrigin(origins = "*", allowedHeaders = "*")
 @RestController
 @RequestMapping(path = "/user", produces = "application/json;charset=utf8")
+//@RequestMapping(value = "/{id}", method=RequestMethod.PUT)
 public class AuthController {
     //test comment
     AuthService authService = new AuthService();
@@ -45,5 +49,16 @@ public class AuthController {
     @PostMapping("/unblock/{userId}")
     public ResponseEntity<Boolean> unBlockUser(@PathVariable String userId) {
         return authService.unBlockUser(userId);
+    }
+
+    @GetMapping
+    public ResponseEntity<List<User>> getUsers() {
+        return authService.getUsers();
+    }
+
+    @PutMapping
+    public ResponseEntity<UserDTO> updateUser(@RequestBody UserDTO userDTO) {
+        System.out.println(userDTO);
+        return authService.updateUser(userDTO);
     }
 }

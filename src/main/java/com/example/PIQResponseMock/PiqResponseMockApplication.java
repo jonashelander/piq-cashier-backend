@@ -20,7 +20,7 @@ public class PiqResponseMockApplication {
         AuthService authService = new AuthService();
         UserRepository userRepository = new UserRepository();
 
-        SignUpDTO user = new SignUpDTO(
+        SignUpDTO user1 = new SignUpDTO(
                 "Jonas",
                 "Helander",
                 "1987-06-29",
@@ -35,8 +35,40 @@ public class PiqResponseMockApplication {
                 "pass"
         );
 
-        authService.signUp(user);
-        userRepository.findAll();
+/*        SignUpDTO user2 = new SignUpDTO(
+                "Jonas",
+                "Helander",
+                "1987-06-29",
+                "MALE",
+                "SWE",
+                "Stockholm",
+                "Stockholm",
+                "Praktejdervägen 13",
+                "184 61",
+                "+46709660528",
+                "user@gmail.com",
+                "pass"
+        );
+
+        SignUpDTO user3 = new SignUpDTO(
+                "Jonas",
+                "Helander",
+                "1987-06-29",
+                "MALE",
+                "SWE",
+                "Stockholm",
+                "Stockholm",
+                "Praktejdervägen 13",
+                "184 61",
+                "+46709660528",
+                "user@gmail.com",
+                "pass"
+        );*/
+
+        authService.signUp(user1);
+ /*       authService.signUp(user2);
+        authService.signUp(user3);*/
+        //userRepository.findAll();
     }
 
 /*    @Bean

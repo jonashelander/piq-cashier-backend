@@ -33,8 +33,8 @@ public class UserRepository {
         return user;
     }
 
-    public void findAll() {
-        users.forEach(u -> System.out.println(u));
+    public List findAll() {
+        return users.stream().toList();
     }
 
 

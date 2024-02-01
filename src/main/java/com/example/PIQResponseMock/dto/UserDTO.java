@@ -3,7 +3,6 @@ package com.example.PIQResponseMock.dto;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 
-
 @Data
 @AllArgsConstructor
 public class UserDTO {
@@ -22,4 +21,6 @@ public class UserDTO {
     String email;
     double balance;
     String balanceCy;
+    boolean activated;
+    String userCat;
 }

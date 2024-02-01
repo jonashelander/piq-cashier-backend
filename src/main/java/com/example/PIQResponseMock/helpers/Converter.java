@@ -23,7 +23,9 @@ public class Converter {
                 user.getPhone(),
                 user.getEmail(),
                 user.getBalance(),
-                user.getBalanceCy()
+                user.getBalanceCy(),
+                user.isActivated(),
+                user.getUserCat()
         );
 
         return userDTO;
