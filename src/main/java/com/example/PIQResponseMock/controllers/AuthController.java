@@ -6,6 +6,7 @@ import com.example.PIQResponseMock.dto.SignInDTO;
 import com.example.PIQResponseMock.dto.UserDTO;
 import com.example.PIQResponseMock.models.User;
 import com.example.PIQResponseMock.services.AuthService;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -16,7 +17,6 @@ import java.util.List;
 @RequestMapping(path = "/user", produces = "application/json;charset=utf8")
 //@RequestMapping(value = "/{id}", method=RequestMethod.PUT)
 public class AuthController {
-    //test comment
     AuthService authService = new AuthService();
 
     @PostMapping("/signup")
@@ -56,9 +56,9 @@ public class AuthController {
         return authService.getUsers();
     }
 
-    @PutMapping
-    public ResponseEntity<UserDTO> updateUser(@RequestBody UserDTO userDTO) {
-        System.out.println(userDTO);
+    @PutMapping("/{userId}")
+    public ResponseEntity<UserDTO> updateUser(@PathVariable String userId, @RequestBody UserDTO userDTO) {
         return authService.updateUser(userDTO);
     }
+
 }

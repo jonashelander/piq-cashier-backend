@@ -107,10 +107,11 @@ public class AuthService {
     }
 
     public ResponseEntity<UserDTO> updateUser(UserDTO userDTO) {
+        System.out.println("userId: " + userDTO.getUserId());
         User user = userRepository.getUserById(userDTO.getUserId());
 
         user.setUserId(userDTO.getUserId());
-        user.setSessionId(userDTO.getSessionId());
+        //user.setSessionId(userDTO.getSessionId());
         user.setFirstName(userDTO.getFirstName());
         user.setLastName(userDTO.getLastName());
         user.setDob(userDTO.getLastName());
@@ -127,9 +128,10 @@ public class AuthService {
         user.setActivated(userDTO.isActivated());
 
         System.out.println(userDTO.isActivated());
-        userRepository.save(user);
+        //userRepository.save(user);
 
         UserDTO updatedUserDTO = Converter.convertUserToDTO(user);
-        return new ResponseEntity<>(updatedUserDTO, HttpStatus.OK);
+        //return new ResponseEntity<>(updatedUserDTO, HttpStatus.OK);
+        return ResponseEntity.ok().body(updatedUserDTO);
     }
 }
