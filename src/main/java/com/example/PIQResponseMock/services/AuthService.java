@@ -58,6 +58,7 @@ public class AuthService {
 
     public ResponseEntity authUser(AuthDTO authDTO) {
         User user = userRepository.getUserById(authDTO.getUserId());
+
         if (user.getSessionId() == null || !user.getSessionId().equals(authDTO.getSessionId())) {
             return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
         }
@@ -77,7 +78,7 @@ public class AuthService {
         return result >= 0;
     }
 
-    public boolean checkIfBlocked(String userId) {
+    public boolean checkIfActivated(String userId) {
         User user = userRepository.getUserById(userId);
         return user.isActivated();
     }
