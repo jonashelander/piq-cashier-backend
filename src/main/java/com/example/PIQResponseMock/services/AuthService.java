@@ -53,7 +53,6 @@ public class AuthService {
     public void signOut(String userId) {
         User user = userRepository.getUserById(userId);
         user.setSessionId(null);
-        userRepository.updateUserById(user);
     }
 
     public ResponseEntity authUser(AuthDTO authDTO) {
