@@ -1,6 +1,6 @@
 package com.example.PIQResponseMock.repositories;
 
-import com.example.PIQResponseMock.dto.SignInDTO;
+/*import com.example.PIQResponseMock.dto.SignInDTO;
 import com.example.PIQResponseMock.models.User;
 import org.springframework.stereotype.Repository;
 
@@ -37,5 +37,14 @@ public class UserRepository {
         return users.stream().toList();
     }
 
+}*/
 
+import com.example.PIQResponseMock.dto.SignInDTO;
+import com.example.PIQResponseMock.model.User;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
+
+@Repository
+public interface UserRepository extends JpaRepository<User, String> {
+    User getUserByEmail(String email);
 }

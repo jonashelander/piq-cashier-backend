@@ -1,6 +1,7 @@
-package com.example.PIQResponseMock.models;
+package com.example.PIQResponseMock.model;
 
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import javax.persistence.Entity;
 import javax.persistence.Id;
@@ -9,6 +10,7 @@ import java.util.UUID;
 
 
 @Data
+@NoArgsConstructor
 @Entity
 @Table(name="users")
 public class User {

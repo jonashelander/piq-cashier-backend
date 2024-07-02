@@ -4,9 +4,9 @@ import com.example.PIQResponseMock.dto.AuthDTO;
 import com.example.PIQResponseMock.dto.SignUpDTO;
 import com.example.PIQResponseMock.dto.SignInDTO;
 import com.example.PIQResponseMock.dto.UserDTO;
-import com.example.PIQResponseMock.models.User;
+import com.example.PIQResponseMock.model.User;
 import com.example.PIQResponseMock.services.AuthService;
-import org.springframework.http.HttpStatus;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -17,7 +17,12 @@ import java.util.List;
 @RequestMapping(path = "/user", produces = "application/json;charset=utf8")
 //@RequestMapping(value = "/{id}", method=RequestMethod.PUT)
 public class AuthController {
-    AuthService authService = new AuthService();
+    AuthService authService;
+
+    @Autowired
+    public AuthController(AuthService authService) {
+        this.authService = authService;
+    }
 
     @PostMapping("/signup")
     public ResponseEntity<UserDTO> signUp(@RequestBody SignUpDTO signUpDTO) {
@@ -37,7 +42,7 @@ public class AuthController {
     }
 
     @PostMapping("/auth")
-    public ResponseEntity<Boolean> authenticateUser(@RequestBody AuthDTO authDTO) {
+    public ResponseEntity<?> authenticateUser(@RequestBody AuthDTO authDTO) {
         return authService.authUser(authDTO);
     }
 
@@ -49,6 +54,11 @@ public class AuthController {
     @PostMapping("/unblock/{userId}")
     public ResponseEntity<Boolean> unBlockUser(@PathVariable String userId) {
         return authService.unBlockUser(userId);
+    }
+
+    @GetMapping("{userId}")
+    public ResponseEntity<UserDTO> getUserById(@PathVariable String userId) {
+        return authService.getUserById(userId);
     }
 
     @GetMapping

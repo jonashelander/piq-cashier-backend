@@ -1,10 +1,11 @@
 package com.example.PIQResponseMock.services;
 
-import com.example.PIQResponseMock.helpers.Converters;
+import com.example.PIQResponseMock.helpers.Convert;
 import com.example.PIQResponseMock.repositories.UserRepository;
 import com.example.PIQResponseMock.dto.*;
-import com.example.PIQResponseMock.models.User;
+import com.example.PIQResponseMock.model.User;
 import com.example.PIQResponseMock.responses.*;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -13,21 +14,28 @@ import java.util.UUID;
 
 @Service
 public class IntegrationApiService {
-    UserRepository userRepository = new UserRepository();
-    AuthService authService = new AuthService();
+    UserRepository userRepository;
+    AuthService authService;
+
+    @Autowired
+    public IntegrationApiService(UserRepository userRepository, AuthService authService) {
+        this.userRepository = userRepository;
+        this.authService = authService;
+    }
+
+    public ResponseEntity<VerifyUserResponse> verifyUser(VerifyUserDTO verifyUserDTO) {
+        VerifyUserResponse verifyUserResponse = buildVerifyUserResponse(verifyUserDTO);
+        return new ResponseEntity<>(verifyUserResponse, HttpStatus.OK);
+    }
 
     public VerifyUserResponse buildVerifyUserResponse(VerifyUserDTO verifyUserDTO) {
-        User user = userRepository.getUserById(verifyUserDTO.getUserId());
-
+        User user = userRepository.findById(verifyUserDTO.getUserId()).get();
         AuthDTO authDTO = new AuthDTO(verifyUserDTO.getUserId(), verifyUserDTO.getSessionId());
-
         boolean isActivated = authService.checkIfActivated(verifyUserDTO.getUserId());
         boolean sessionActive;
-
         if (authService.authUser(authDTO).getStatusCode().equals(org.springframework.http.HttpStatus.OK)) {
             sessionActive = true;
         } else sessionActive = false;
-
         if (sessionActive && isActivated) {
             return new VerifyUserResponse(
                     user.getUserId(),
@@ -109,27 +117,24 @@ public class IntegrationApiService {
         );
     }
 
-    public ResponseEntity<VerifyUserResponse> verifyUser(VerifyUserDTO verifyUserDTO) {
-        VerifyUserResponse verifyUserResponse = buildVerifyUserResponse(verifyUserDTO);
-        return new ResponseEntity<>(verifyUserResponse, HttpStatus.OK);
-    }
-
     public ResponseEntity<AuthorizeResponse> authorize(AuthorizeDTO authorizeDTO) {
-        User user = userRepository.getUserById(authorizeDTO.getUserId());
-
+        User user = userRepository.findById(authorizeDTO.getUserId()).get();
+        double calculatedBalance = authService.checkBalance(authorizeDTO.getUserId(), authorizeDTO.getTxAmount());
         if (authorizeDTO.getTxName().equals("CreditcardWithdrawal")) {
-            if (authService.checkBalance(authorizeDTO.getUserId(), authorizeDTO.getTxAmount())) {
+            if (calculatedBalance >= 0) {
                 AuthorizeResponse authorizeResponse = new AuthorizeResponse(
                         user.getUserId(),
                         true,
                         UUID.randomUUID().toString());
+                user.setBalance(calculatedBalance);
+                userRepository.save(user);
                 return new ResponseEntity(authorizeResponse, HttpStatus.OK);
             } else {
                 AuthorizeResponse authorizeResponse = new AuthorizeResponse(
                         user.getUserId(),
                         false,
                         UUID.randomUUID().toString(),
-                        1,
+                        01,
                         "Not enough funds");
                 return new ResponseEntity(authorizeResponse, HttpStatus.OK);
             }
@@ -151,18 +156,16 @@ public class IntegrationApiService {
     }
 
     public ResponseEntity<TransferResponse> transfer(TransferDTO transferDTO) {
-        User user = userRepository.getUserById(transferDTO.getUserId());
+        User user = userRepository.findById(transferDTO.getUserId()).get();
         double convertedTxAmount;
         try {
             convertedTxAmount = Double.parseDouble(transferDTO.getTxAmount());
         } catch (NumberFormatException e) {
             convertedTxAmount = 0;
-            System.out.println("txAmount could not be converted");
         }
-
         double newBalance = user.getBalance() + convertedTxAmount;
-
-        user.setBalance(Converters.twoDecimals(newBalance));
+        user.setBalance(Convert.twoDecimals(newBalance));
+        userRepository.save(user);
         TransferResponse transferResponse = new TransferResponse(
                 user.getUserId(),
                 true,

@@ -3,6 +3,7 @@ package com.example.PIQResponseMock.controllers;
 import com.example.PIQResponseMock.dto.*;
 import com.example.PIQResponseMock.responses.*;
 import com.example.PIQResponseMock.services.IntegrationApiService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -14,8 +15,12 @@ import java.time.LocalDateTime;
 @RequestMapping(path = "/paymentiq", produces = "application/json;charset=utf8")
 public class IntegrationApiController {
 
+    IntegrationApiService integrationApiService;
 
-    IntegrationApiService integrationApiService = new IntegrationApiService();
+    @Autowired
+    public IntegrationApiController(IntegrationApiService integrationApiService) {
+        this.integrationApiService = integrationApiService;
+    }
 
     @PostMapping("/hello")
     public String helloWorld() {

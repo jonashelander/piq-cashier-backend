@@ -1,14 +1,14 @@
 package com.example.PIQResponseMock.helpers;
 
 import com.example.PIQResponseMock.dto.UserDTO;
-import com.example.PIQResponseMock.models.User;
+import com.example.PIQResponseMock.model.User;
 import lombok.Data;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 
 @Data
-public class Converters {
+public class Convert {
     public static UserDTO convertUserToDTO(User user) {
 
         UserDTO userDTO = new UserDTO(

@@ -5,19 +5,26 @@ import com.example.PIQResponseMock.dto.AuthDTO;
 import com.example.PIQResponseMock.dto.SignInDTO;
 import com.example.PIQResponseMock.dto.SignUpDTO;
 import com.example.PIQResponseMock.dto.UserDTO;
-import com.example.PIQResponseMock.helpers.Converters;
-import com.example.PIQResponseMock.models.User;
+import com.example.PIQResponseMock.helpers.Convert;
+import com.example.PIQResponseMock.model.User;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
-
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 @Service
 public class AuthService {
-    UserRepository userRepository = new UserRepository();
+
+    UserRepository userRepository;
+
+    @Autowired
+    public AuthService(UserRepository userRepository) {
+        this.userRepository = userRepository;
+    }
 
     public UserDTO signUp(SignUpDTO signUpDTO) {
         User user = new User(
@@ -37,101 +44,114 @@ public class AuthService {
                 "New member"
         );
         userRepository.save(user);
-        UserDTO userDTO = Converters.convertUserToDTO(user);
-        return userDTO;
+        return Convert.convertUserToDTO(user);
     }
 
     public ResponseEntity<UserDTO> signIn(SignInDTO signInDTO) {
-        User user = userRepository.getUserBySignInDTO(signInDTO);
-
+        User user = userRepository.getUserByEmail(signInDTO.getEmail());
+        if (user == null) {
+            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+        }
         user.setSessionId(UUID.randomUUID().toString());
-        UserDTO userDTO = Converters.convertUserToDTO(user);
-
-        return new ResponseEntity<>(userDTO, HttpStatus.OK);
+        userRepository.save(user);
+        UserDTO userDTO = Convert.convertUserToDTO(user);
+        return ResponseEntity.ok(userDTO);
     }
 
     public void signOut(String userId) {
-        User user = userRepository.getUserById(userId);
-        user.setSessionId(null);
+        userRepository.findById(userId).ifPresent(user -> {
+            user.setSessionId(null);
+            userRepository.save(user);
+        });
     }
 
-    public ResponseEntity authUser(AuthDTO authDTO) {
-        User user = userRepository.getUserById(authDTO.getUserId());
-
-        if (user.getSessionId() == null || !user.getSessionId().equals(authDTO.getSessionId())) {
-            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
-        }
-        UserDTO userDTO = Converters.convertUserToDTO(user);
-        return new ResponseEntity<>(userDTO, HttpStatus.OK);
+    public ResponseEntity<?> authUser(AuthDTO authDTO) {
+        return userRepository.findById(authDTO.getUserId())
+                .map(user -> {
+                    if (user.getSessionId() == null || !user.getSessionId().equals(authDTO.getSessionId())) {
+                        return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+                    }
+                    UserDTO userDTO = Convert.convertUserToDTO(user);
+                    return ResponseEntity.ok(userDTO);
+                })
+                .orElse(new ResponseEntity<>(HttpStatus.UNAUTHORIZED));
     }
 
-    public boolean checkBalance(String userId, String txAmount) {
-        double convertedAmount;
-        try {
-            convertedAmount = Double.parseDouble(txAmount);
-        } catch (NumberFormatException e) {
-            convertedAmount = 0.00;
-        }
-        User user = userRepository.getUserById(userId);
-        double result = user.getBalance() + convertedAmount;
-        return result >= 0;
+    public double checkBalance(String userId, String txAmount) {
+        return userRepository.findById(userId)
+                .map(user -> {
+                    double convertedAmount;
+                    try {
+                        convertedAmount = Double.parseDouble(txAmount);
+                    } catch (NumberFormatException e) {
+                        convertedAmount = 0.00;
+                    }
+                    return user.getBalance() + convertedAmount;
+                })
+                .orElse(0.00);
     }
 
     public boolean checkIfActivated(String userId) {
-        User user = userRepository.getUserById(userId);
-        return user.isActivated();
+        return userRepository.findById(userId)
+                .map(User::isActivated)
+                .orElse(false);
     }
 
     public ResponseEntity<Boolean> blockUser(String userId) {
-        User user = userRepository.getUserById(userId);
-        user.setActivated(true);
-
-        return new ResponseEntity<>(user.isActivated(), HttpStatus.OK);
+        return userRepository.findById(userId)
+                .map(user -> {
+                    user.setActivated(false);
+                    userRepository.save(user);
+                    return ResponseEntity.ok(user.isActivated());
+                })
+                .orElse(new ResponseEntity<>(HttpStatus.NOT_FOUND));
     }
 
     public ResponseEntity<Boolean> unBlockUser(String userId) {
-        User user = userRepository.getUserById(userId);
-
-        user.setActivated(false);
-        return new ResponseEntity<>(user.isActivated(), HttpStatus.OK);
+        return userRepository.findById(userId)
+                .map(user -> {
+                    user.setActivated(true);
+                    userRepository.save(user);
+                    return ResponseEntity.ok(user.isActivated());
+                })
+                .orElse(new ResponseEntity<>(HttpStatus.NOT_FOUND));
     }
 
     public ResponseEntity<List<User>> getUsers() {
-        List users = userRepository.findAll();
-
+        List<User> users = userRepository.findAll();
         if (users.isEmpty()) {
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-        } else {
-            return new ResponseEntity<>(users, HttpStatus.OK);
         }
+        return ResponseEntity.ok(users);
     }
 
     public ResponseEntity<UserDTO> updateUser(UserDTO userDTO) {
-        System.out.println("userId: " + userDTO.getUserId());
-        User user = userRepository.getUserById(userDTO.getUserId());
+        return userRepository.findById(userDTO.getUserId())
+                .map(user -> {
+                    user.setUserId(userDTO.getUserId());
+                    user.setFirstName(userDTO.getFirstName());
+                    user.setLastName(userDTO.getLastName());
+                    user.setDob(userDTO.getDob());
+                    user.setSex(userDTO.getSex());
+                    user.setCountry(userDTO.getCountry());
+                    user.setCity(userDTO.getCity());
+                    user.setState(userDTO.getState());
+                    user.setStreet(userDTO.getStreet());
+                    user.setZip(userDTO.getZip());
+                    user.setPhone(userDTO.getPhone());
+                    user.setEmail(userDTO.getEmail());
+                    user.setBalance(userDTO.getBalance());
+                    user.setBalanceCy(userDTO.getBalanceCy());
+                    user.setActivated(userDTO.isActivated());
+                    userRepository.save(user);
+                    return ResponseEntity.ok(Convert.convertUserToDTO(user));
+                })
+                .orElse(new ResponseEntity<>(HttpStatus.NOT_FOUND));
+    }
 
-        user.setUserId(userDTO.getUserId());
-        //user.setSessionId(userDTO.getSessionId());
-        user.setFirstName(userDTO.getFirstName());
-        user.setLastName(userDTO.getLastName());
-        user.setDob(userDTO.getLastName());
-        user.setSex(userDTO.getSex());
-        user.setCountry(userDTO.getCountry());
-        user.setCity(userDTO.getCity());
-        user.setState(userDTO.getState());
-        user.setStreet(userDTO.getStreet());
-        user.setZip(userDTO.getZip());
-        user.setPhone(userDTO.getPhone());
-        user.setEmail(userDTO.getEmail());
-        user.setBalance(userDTO.getBalance());
-        user.setBalanceCy(userDTO.getBalanceCy());
-        user.setActivated(userDTO.isActivated());
-
-        System.out.println(userDTO.isActivated());
-        //userRepository.save(user);
-
-        UserDTO updatedUserDTO = Converters.convertUserToDTO(user);
-        //return new ResponseEntity<>(updatedUserDTO, HttpStatus.OK);
-        return ResponseEntity.ok().body(updatedUserDTO);
+    public ResponseEntity<UserDTO> getUserById(String userId) {
+        return userRepository.findById(userId)
+                .map(user -> ResponseEntity.ok(Convert.convertUserToDTO(user)))
+                .orElse(new ResponseEntity<>(HttpStatus.NOT_FOUND));
     }
 }
