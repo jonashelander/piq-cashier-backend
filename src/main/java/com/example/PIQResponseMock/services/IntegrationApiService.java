@@ -1,5 +1,6 @@
 package com.example.PIQResponseMock.services;
 
+import com.example.PIQResponseMock.helpers.Converters;
 import com.example.PIQResponseMock.repositories.UserRepository;
 import com.example.PIQResponseMock.dto.*;
 import com.example.PIQResponseMock.models.User;
@@ -154,11 +155,14 @@ public class IntegrationApiService {
         double convertedTxAmount;
         try {
             convertedTxAmount = Double.parseDouble(transferDTO.getTxAmount());
-
         } catch (NumberFormatException e) {
             convertedTxAmount = 0;
+            System.out.println("txAmount could not be converted");
         }
-        user.setBalance(user.getBalance() + convertedTxAmount);
+
+        double newBalance = user.getBalance() + convertedTxAmount;
+
+        user.setBalance(Converters.twoDecimals(newBalance));
         TransferResponse transferResponse = new TransferResponse(
                 user.getUserId(),
                 true,

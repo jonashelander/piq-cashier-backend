@@ -5,7 +5,7 @@ import com.example.PIQResponseMock.dto.AuthDTO;
 import com.example.PIQResponseMock.dto.SignInDTO;
 import com.example.PIQResponseMock.dto.SignUpDTO;
 import com.example.PIQResponseMock.dto.UserDTO;
-import com.example.PIQResponseMock.helpers.Converter;
+import com.example.PIQResponseMock.helpers.Converters;
 import com.example.PIQResponseMock.models.User;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -37,7 +37,7 @@ public class AuthService {
                 "New member"
         );
         userRepository.save(user);
-        UserDTO userDTO = Converter.convertUserToDTO(user);
+        UserDTO userDTO = Converters.convertUserToDTO(user);
         return userDTO;
     }
 
@@ -45,7 +45,7 @@ public class AuthService {
         User user = userRepository.getUserBySignInDTO(signInDTO);
 
         user.setSessionId(UUID.randomUUID().toString());
-        UserDTO userDTO = Converter.convertUserToDTO(user);
+        UserDTO userDTO = Converters.convertUserToDTO(user);
 
         return new ResponseEntity<>(userDTO, HttpStatus.OK);
     }
@@ -61,7 +61,7 @@ public class AuthService {
         if (user.getSessionId() == null || !user.getSessionId().equals(authDTO.getSessionId())) {
             return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
         }
-        UserDTO userDTO = Converter.convertUserToDTO(user);
+        UserDTO userDTO = Converters.convertUserToDTO(user);
         return new ResponseEntity<>(userDTO, HttpStatus.OK);
     }
 
@@ -130,7 +130,7 @@ public class AuthService {
         System.out.println(userDTO.isActivated());
         //userRepository.save(user);
 
-        UserDTO updatedUserDTO = Converter.convertUserToDTO(user);
+        UserDTO updatedUserDTO = Converters.convertUserToDTO(user);
         //return new ResponseEntity<>(updatedUserDTO, HttpStatus.OK);
         return ResponseEntity.ok().body(updatedUserDTO);
     }

@@ -4,8 +4,11 @@ import com.example.PIQResponseMock.dto.UserDTO;
 import com.example.PIQResponseMock.models.User;
 import lombok.Data;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+
 @Data
-public class Converter {
+public class Converters {
     public static UserDTO convertUserToDTO(User user) {
 
         UserDTO userDTO = new UserDTO(
@@ -22,7 +25,7 @@ public class Converter {
                 user.getZip(),
                 user.getPhone(),
                 user.getEmail(),
-                user.getBalance(),
+                twoDecimals(user.getBalance()),
                 user.getBalanceCy(),
                 user.isActivated(),
                 user.getUserCat()
@@ -30,4 +33,11 @@ public class Converter {
 
         return userDTO;
     }
+
+    public static double twoDecimals(double value) {
+        BigDecimal bd = BigDecimal.valueOf(value);
+        bd = bd.setScale(2, RoundingMode.HALF_UP);
+        return bd.doubleValue();
+    }
+
 }

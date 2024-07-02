@@ -3,6 +3,11 @@ package com.example.PIQResponseMock.dto;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+import java.text.DecimalFormat;
+
+
 @Data
 @AllArgsConstructor
 public class UserDTO {
@@ -24,3 +29,4 @@ public class UserDTO {
     boolean activated;
     String userCat;
 }
+
