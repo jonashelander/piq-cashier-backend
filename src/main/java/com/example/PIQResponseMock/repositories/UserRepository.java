@@ -47,4 +47,5 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface UserRepository extends JpaRepository<User, String> {
     User getUserByEmail(String email);
+    //Addint a comment for testing
 }
