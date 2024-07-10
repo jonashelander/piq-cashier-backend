@@ -1,4 +1,4 @@
-package com.example.PIQResponseMock.loggs;
+package com.example.PIQResponseMock.logs;
 
 import java.time.LocalDateTime;
 

@@ -13,7 +13,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 
 @Service
@@ -80,15 +79,20 @@ public class AuthService {
     public double checkBalance(String userId, String txAmount) {
         return userRepository.findById(userId)
                 .map(user -> {
-                    double convertedAmount;
-                    try {
-                        convertedAmount = Double.parseDouble(txAmount);
-                    } catch (NumberFormatException e) {
-                        convertedAmount = 0.00;
-                    }
+                    double convertedAmount = convertTxAmount(txAmount);
                     return user.getBalance() + convertedAmount;
                 })
                 .orElse(0.00);
+    }
+
+    public double convertTxAmount(String txAmount) {
+        double convertedAmount;
+        try {
+            convertedAmount = Double.parseDouble(txAmount);
+        } catch (NumberFormatException e) {
+            convertedAmount = 0.00;
+        }
+        return convertedAmount;
     }
 
     public boolean checkIfActivated(String userId) {

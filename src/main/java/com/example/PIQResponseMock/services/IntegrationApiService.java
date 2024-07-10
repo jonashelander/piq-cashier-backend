@@ -1,6 +1,8 @@
 package com.example.PIQResponseMock.services;
 
 import com.example.PIQResponseMock.helpers.Convert;
+import com.example.PIQResponseMock.model.Transaction;
+import com.example.PIQResponseMock.repositories.TransactionRepository;
 import com.example.PIQResponseMock.repositories.UserRepository;
 import com.example.PIQResponseMock.dto.*;
 import com.example.PIQResponseMock.model.User;
@@ -16,11 +18,15 @@ import java.util.UUID;
 public class IntegrationApiService {
     UserRepository userRepository;
     AuthService authService;
+    TransactionService transactionService;
+    TransactionRepository transactionRepository;
 
     @Autowired
-    public IntegrationApiService(UserRepository userRepository, AuthService authService) {
+    public IntegrationApiService(UserRepository userRepository, AuthService authService, TransactionService transactionService, TransactionRepository transactionRepository) {
         this.userRepository = userRepository;
         this.authService = authService;
+        this.transactionService = transactionService;
+        this.transactionRepository = transactionRepository;
     }
 
     public ResponseEntity<VerifyUserResponse> verifyUser(VerifyUserDTO verifyUserDTO) {
@@ -119,6 +125,7 @@ public class IntegrationApiService {
 
     public ResponseEntity<AuthorizeResponse> authorize(AuthorizeDTO authorizeDTO) {
         User user = userRepository.findById(authorizeDTO.getUserId()).get();
+        Transaction transaction = transactionService.createTransaction(authorizeDTO);
         double calculatedBalance = authService.checkBalance(authorizeDTO.getUserId(), authorizeDTO.getTxAmount());
         if (authorizeDTO.getTxName().equals("CreditcardWithdrawal")) {
             if (calculatedBalance >= 0) {
@@ -175,6 +182,9 @@ public class IntegrationApiService {
     }
 
     public ResponseEntity<CancelResponse> cancel(CancelDTO cancelDTO) {
+        Transaction transaction = transactionRepository.getTransactionByAuthCode(cancelDTO.getAuthCode());
+        if (transaction.getTxName().equals("CretitcardWithdrawal") && transaction.isFinalized()) {
+        }
         CancelResponse cancelResponse = new CancelResponse(
                 "JonasEUR",
                 true,
