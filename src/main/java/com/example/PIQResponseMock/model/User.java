@@ -39,8 +39,6 @@ public class User {
 
     public User(String firstName, String lastName, String dob, String sex, String country, String city, String state, String street, String zip, String phone, String email, String password, boolean activated, String userCat) {
         this.userId = UUID.randomUUID().toString();
-//        Setting userId to JonasEUR until I have implemented a database.
-//        this.userId = "JonasEUR";
         this.firstName = firstName;
         this.lastName = lastName;
         this.dob = dob;

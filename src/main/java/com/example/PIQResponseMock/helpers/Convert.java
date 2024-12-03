@@ -28,7 +28,8 @@ public class Convert {
                 twoDecimals(user.getBalance()),
                 user.getBalanceCy(),
                 user.isActivated(),
-                user.getUserCat()
+                user.getUserCat(),
+                user.getKycStatus()
         );
 
         return userDTO;

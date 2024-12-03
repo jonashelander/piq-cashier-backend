@@ -12,19 +12,18 @@ import java.util.UUID;
 @Entity
 public class Transaction {
     @Id
-    String merchantTxId;
     String authCode;
+    String merchantTxId;
     String userId;
     String txName;
     double txAmount;
-    boolean finalized;
+    boolean finalized = false;
 
     public Transaction(String userId, String txName, double txAmount) {
-        this.merchantTxId = UUID.randomUUID().toString();
         this.authCode = UUID.randomUUID().toString();
+        this.merchantTxId = UUID.randomUUID().toString();
         this.userId = userId;
         this.txName = txName;
         this.txAmount = txAmount;
-        this.finalized = finalized;
     }
 }

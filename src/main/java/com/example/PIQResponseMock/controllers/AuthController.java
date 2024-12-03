@@ -56,8 +56,9 @@ public class AuthController {
         return authService.unBlockUser(userId);
     }
 
-    @GetMapping("{userId}")
+    @GetMapping("/{userId}")
     public ResponseEntity<UserDTO> getUserById(@PathVariable String userId) {
+        System.out.println("userid is " + userId);
         return authService.getUserById(userId);
     }
 

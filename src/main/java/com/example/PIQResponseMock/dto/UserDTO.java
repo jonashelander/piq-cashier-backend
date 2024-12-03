@@ -28,5 +28,6 @@ public class UserDTO {
     String balanceCy;
     boolean activated;
     String userCat;
+    String kycStatus;
 }
 

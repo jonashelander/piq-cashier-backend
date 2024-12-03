@@ -45,7 +45,8 @@ public class IntegrationApiController {
     }
 
     @PostMapping("/cancel")
-    public ResponseEntity<CancelResponse> cancel(CancelDTO cancelDTO) {
+    public ResponseEntity<CancelResponse> cancel(@RequestBody CancelDTO cancelDTO) {
+        System.out.println("Cancel request received: " + LocalDateTime.now() + cancelDTO);
         return integrationApiService.cancel(cancelDTO);
     }
 

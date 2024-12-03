@@ -12,6 +12,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import javax.persistence.EntityNotFoundException;
 import java.util.UUID;
 
 @Service
@@ -132,7 +133,7 @@ public class IntegrationApiService {
                 AuthorizeResponse authorizeResponse = new AuthorizeResponse(
                         user.getUserId(),
                         true,
-                        UUID.randomUUID().toString());
+                        transaction.getAuthCode());
                 user.setBalance(calculatedBalance);
                 userRepository.save(user);
                 return new ResponseEntity(authorizeResponse, HttpStatus.OK);
@@ -163,13 +164,29 @@ public class IntegrationApiService {
     }
 
     public ResponseEntity<TransferResponse> transfer(TransferDTO transferDTO) {
-        User user = userRepository.findById(transferDTO.getUserId()).get();
+        User user = userRepository.findById(transferDTO.getUserId())
+                .orElseThrow(() -> new EntityNotFoundException("User not found"));
+
+        if (transferDTO.getTxName().equals("CreditcardWithdrawal")) {
+            Transaction transaction = transactionRepository.findById(transferDTO.getAuthCode())
+                    .orElseThrow(() -> new EntityNotFoundException("Transaction not found"));
+            TransferResponse transferResponse = new TransferResponse(
+                    user.getUserId(),
+                    true,
+                    transferDTO.getTxId()
+            );
+            transaction.setFinalized(true);
+            transactionRepository.save(transaction);
+            return new ResponseEntity<>(transferResponse, HttpStatus.OK);
+        }
+
         double convertedTxAmount;
         try {
             convertedTxAmount = Double.parseDouble(transferDTO.getTxAmount());
         } catch (NumberFormatException e) {
             convertedTxAmount = 0;
         }
+
         double newBalance = user.getBalance() + convertedTxAmount;
         user.setBalance(Convert.twoDecimals(newBalance));
         userRepository.save(user);
@@ -178,18 +195,40 @@ public class IntegrationApiService {
                 true,
                 transferDTO.getTxId()
         );
-        return new ResponseEntity(transferResponse, HttpStatus.OK);
+        return new ResponseEntity<>(transferResponse, HttpStatus.OK);
     }
 
     public ResponseEntity<CancelResponse> cancel(CancelDTO cancelDTO) {
-        Transaction transaction = transactionRepository.getTransactionByAuthCode(cancelDTO.getAuthCode());
-        if (transaction.getTxName().equals("CretitcardWithdrawal") && transaction.isFinalized()) {
+        User user = userRepository.findById(cancelDTO.getUserId()).orElseThrow(() -> new EntityNotFoundException("User not found"));
+        Transaction transaction = transactionRepository.findById(cancelDTO.getAuthCode()).orElseThrow(() -> new EntityNotFoundException("Transaction not found"));
+        if (cancelDTO.getTxName().equals("CreditcardWithdrawal")) {
+            //Need to reverse the amount since this is giving the user back the amount?
+            double convertedTxAmount;
+            try {
+                convertedTxAmount = Double.parseDouble(cancelDTO.getTxAmount());
+            } catch (NumberFormatException e) {
+                convertedTxAmount = 0;
+            }
+            double newBalance = user.getBalance() - convertedTxAmount;
+            user.setBalance(Convert.twoDecimals(newBalance));
+            userRepository.save(user);
+            transaction.setFinalized(true);
+            transactionRepository.save(transaction);
+            CancelResponse cancelResponse = new CancelResponse(
+                    user.getUserId(),
+                    true,
+                    05,
+                    "No errors"
+            );
+            return new ResponseEntity(cancelResponse, HttpStatus.OK);
         }
+        transaction.setFinalized(true);
+        transactionRepository.save(transaction);
         CancelResponse cancelResponse = new CancelResponse(
-                "JonasEUR",
+                cancelDTO.getUserId(),
                 true,
-                502,
-                "Something went wrong"
+                01,
+                "Nothing went wrong"
         );
         return new ResponseEntity(cancelResponse, HttpStatus.OK);
     }
@@ -228,7 +267,6 @@ public class IntegrationApiService {
                 ),
                 400,
                 "Something went wrong"
-
         );
         return new ResponseEntity(lookupUserResponse, HttpStatus.OK);
     }
