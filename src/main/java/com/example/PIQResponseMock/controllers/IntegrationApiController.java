@@ -9,7 +9,6 @@ import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
 
-
 @CrossOrigin(origins = "*", allowedHeaders = "*")
 @RestController
 @RequestMapping(path = "/paymentiq", produces = "application/json;charset=utf8")
@@ -28,36 +27,36 @@ public class IntegrationApiController {
     }
 
     @PostMapping("/verifyuser")
-    public ResponseEntity<VerifyUserResponse> verifyUser(@RequestBody VerifyUserDTO verifyUserDTO) {
-        return integrationApiService.verifyUser(verifyUserDTO);
+    public ResponseEntity<VerifyUserResponse> verifyUser(@RequestBody VerifyUserResponseDTO verifyUserResponseDTO) {
+        return integrationApiService.verifyUser(verifyUserResponseDTO);
     }
 
     @PostMapping("/authorize")
-    public ResponseEntity<AuthorizeResponse> authorize(@RequestBody AuthorizeDTO authorizeDTO) {
-        return integrationApiService.authorize(authorizeDTO);
+    public ResponseEntity<AuthorizeResponse> authorize(@RequestBody AuthorizeResponseDTO authorizeResponseDTO) {
+        System.out.println(authorizeResponseDTO);
+        return integrationApiService.authorize(authorizeResponseDTO);
     }
 
     @PostMapping("/transfer")
-    public ResponseEntity<TransferResponse> transfer(@RequestBody TransferDTO transferDTO) {
-        System.out.println("Transfer request received: " + LocalDateTime.now() + transferDTO);
-        return integrationApiService.transfer(transferDTO);
+    public ResponseEntity<TransferResponse> transfer(@RequestBody TransferResponseDTO transferResponseDTO) {
+        return integrationApiService.transfer(transferResponseDTO);
 
     }
 
     @PostMapping("/cancel")
-    public ResponseEntity<CancelResponse> cancel(@RequestBody CancelDTO cancelDTO) {
-        System.out.println("Cancel request received: " + LocalDateTime.now() + cancelDTO);
-        return integrationApiService.cancel(cancelDTO);
+    public ResponseEntity<CancelResponse> cancel(@RequestBody CancelResponseDTO cancelResponseDTO) {
+        System.out.println("Cancel request received: " + LocalDateTime.now() + cancelResponseDTO);
+        return integrationApiService.cancel(cancelResponseDTO);
     }
 
     @PostMapping("/notification")
-    public ResponseEntity<NotificationResponse> notification(NotificationDTO notificationDTO) {
-        return integrationApiService.notification(notificationDTO);
+    public ResponseEntity<NotificationResponse> notification(NotificationResponseDTO notificationResponseDTO) {
+        return integrationApiService.notification(notificationResponseDTO);
     }
 
     @PostMapping("/lookupuser")
-    public ResponseEntity<LookupUserResponse> lookupuser(LookupUserDTO lookupUserDTO) {
-        return integrationApiService.lookupUser(lookupUserDTO);
+    public ResponseEntity<LookupUserResponse> lookupuser(LookupUserResponseDTO lookupUserResponseDTO) {
+        return integrationApiService.lookupUser(lookupUserResponseDTO);
     }
 
 }

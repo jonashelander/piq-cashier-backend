@@ -5,7 +5,8 @@ import lombok.Data;
 
 @Data
 @AllArgsConstructor
-public class SignUpDTO {
+public class SignUpResponseDTO {
+    String userId;
     String firstName;
     String lastName;
     String dob;
@@ -15,7 +16,7 @@ public class SignUpDTO {
     String state;
     String street;
     String zip;
-    String phone;
+    String mobile;
     String email;
     String password;
 }

@@ -1,24 +1,24 @@
 package com.example.PIQResponseMock.model;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import javax.persistence.*;
 import java.util.UUID;
-
 
 @Data
 @NoArgsConstructor
 @Entity
-@Table(name="users")
+@Table(name = "users")
 public class User {
 
     @Id
+    String id;
     String userId;
-
     String sessionId;
+    String token;
+    boolean success = true;
+    String test;
     String userCat;
     String kycStatus = "Verified";
     double balance = 10;
@@ -32,13 +32,33 @@ public class User {
     String state;
     String street;
     String zip;
-    String phone;
+    String mobile;
     String email;
     String password;
     boolean activated;
+    String errCode;
+    String errMsg;
+    String locale;
+    String authCode;
 
-    public User(String firstName, String lastName, String dob, String sex, String country, String city, String state, String street, String zip, String phone, String email, String password, boolean activated, String userCat) {
-        this.userId = UUID.randomUUID().toString();
+    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonManagedReference
+    private Authorize authorize;
+
+    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonManagedReference
+    private Transfer transfer;
+
+    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonManagedReference
+    private Cancel cancel;
+
+
+
+
+    public User(String userId, String firstName, String lastName, String dob, String sex, String country, String city, String state, String street, String zip, String mobile, String email, String password, boolean activated, String userCat, String errCode, String errMsg, String locale, String authCode) {
+        this.id = UUID.randomUUID().toString();
+        this.userId = userId;
         this.firstName = firstName;
         this.lastName = lastName;
         this.dob = dob;
@@ -48,10 +68,14 @@ public class User {
         this.state = state;
         this.street = street;
         this.zip = zip;
-        this.phone = phone;
+        this.mobile = mobile;
         this.email = email;
         this.password = password;
         this.activated = true;
         this.userCat = userCat;
+        this.errCode = errCode;
+        this.errMsg = errMsg;
+        this.locale = locale;
+        this.authCode = authCode;
     }
 }

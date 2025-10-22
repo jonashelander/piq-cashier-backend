@@ -8,6 +8,6 @@ import lombok.Data;
 public class CancelResponse {
     private String userId;
     boolean success;
-    int errCode;
+    String errCode;
     String errMsg;
 }

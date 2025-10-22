@@ -1,6 +1,6 @@
 package com.example.PIQResponseMock.services;
 
-import com.example.PIQResponseMock.dto.AuthorizeDTO;
+import com.example.PIQResponseMock.dto.AuthorizeResponseDTO;
 import com.example.PIQResponseMock.model.Transaction;
 import com.example.PIQResponseMock.repositories.TransactionRepository;
 import org.springframework.stereotype.Service;
@@ -16,8 +16,8 @@ public class TransactionService {
         this.transactionRepository = transactionRepository;
     }
 
-    public Transaction createTransaction(AuthorizeDTO authorizeDTO) {
-        Transaction transaction = new Transaction(authorizeDTO.getUserId(), authorizeDTO.getTxName(), authService.convertTxAmount(authorizeDTO.getTxAmount()));
+    public Transaction createTransaction(AuthorizeResponseDTO authorizeResponseDTO) {
+        Transaction transaction = new Transaction(authorizeResponseDTO.getUserId(), authorizeResponseDTO.getTxName(), authService.convertTxAmount(authorizeResponseDTO.getTxAmount()));
         transactionRepository.save(transaction);
         return transaction;
     }

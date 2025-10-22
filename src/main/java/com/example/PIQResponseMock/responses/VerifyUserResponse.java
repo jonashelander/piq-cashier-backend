@@ -6,6 +6,7 @@ import lombok.Data;
 public class VerifyUserResponse {
 
     String userId;
+    String sessionId;
     boolean success;
     String userCat;
     String kycStatus;
@@ -24,8 +25,8 @@ public class VerifyUserResponse {
     String balanceCy;
     String locale;
     Attributes attributes;
-    int errCode = 0;
-    String errMsg = "No errors this time!";
+    String errCode;
+    String errMsg;
 
     public VerifyUserResponse(String userId, boolean success, String kycStatus) {
         this.userId = userId;
@@ -33,8 +34,9 @@ public class VerifyUserResponse {
         this.kycStatus = kycStatus;
     }
 
-    public VerifyUserResponse(String userId, boolean success, String userCat, String kycStatus, String sex, String firstName, String lastName, String street, String city, String state, String zip, String country, String email, String dob, String mobile, double balance, String balanceCy, String locale, Attributes attributes, int errCode, String errMsg) {
+    public VerifyUserResponse(String userId, String sessionId, boolean success, String userCat, String kycStatus, String sex, String firstName, String lastName, String street, String city, String state, String zip, String country, String email, String dob, String mobile, double balance, String balanceCy, String locale, Attributes attributes, String errCode, String errMsg) {
         this.userId = userId;
+        this.sessionId = sessionId;
         this.success = success;
         this.userCat = userCat;
         this.kycStatus = kycStatus;
@@ -57,8 +59,9 @@ public class VerifyUserResponse {
         this.errMsg = errMsg;
     }
 
-    public VerifyUserResponse(String userId, boolean success, String userCat, String kycStatus, String sex, String firstName, String lastName, String street, String city, String state, String zip, String country, String email, String dob, String mobile, double balance, String balanceCy, String locale, Attributes attributes) {
+    public VerifyUserResponse(String userId, String sessionId, boolean success, String userCat, String kycStatus, String sex, String firstName, String lastName, String street, String city, String state, String zip, String country, String email, String dob, String mobile, double balance, String balanceCy, String locale, String errCode, String errMsg, Attributes attributes) {
         this.userId = userId;
+        this.sessionId = sessionId;
         this.success = success;
         this.userCat = userCat;
         this.kycStatus = kycStatus;
@@ -76,6 +79,8 @@ public class VerifyUserResponse {
         this.balance = balance;
         this.balanceCy = balanceCy;
         this.locale = locale;
+        this.errCode = errCode;
+        this.errMsg = errMsg;
         this.attributes = attributes;
     }
 }

@@ -1,8 +1,5 @@
 package com.example.PIQResponseMock;
 
-import com.example.PIQResponseMock.repositories.UserRepository;
-import com.example.PIQResponseMock.dto.SignUpDTO;
-import com.example.PIQResponseMock.services.AuthService;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 /*import springfox.documentation.builders.RequestHandlerSelectors;

@@ -4,7 +4,7 @@ package com.example.PIQResponseMock.dto;
 import lombok.Data;
 
 @Data
-public class VerifyUserDTO {
+public class VerifyUserResponseDTO {
     String userId;
     String sessionId;
 

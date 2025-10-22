@@ -6,6 +6,6 @@ import lombok.Data;
 @Data
 @AllArgsConstructor
 public class AuthDTO {
-    String userId;
-    String sessionId;
+    String id;
+    String token;
 }

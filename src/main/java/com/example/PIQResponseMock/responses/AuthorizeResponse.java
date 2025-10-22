@@ -13,8 +13,8 @@ public class AuthorizeResponse {
     String userId;
     boolean success;
     String authCode;
-    int errCode = 0;
-    String errMsg = "No errors this time!";
+    String errCode;
+    String errMsg;
 
 
     public AuthorizeResponse(String userId, boolean success, String authCode) {
@@ -23,7 +23,7 @@ public class AuthorizeResponse {
         this.authCode = authCode;
     }
 
-    public AuthorizeResponse(String userId, boolean success, String authCode, int errCode, String errMsg) {
+    public AuthorizeResponse(String userId, boolean success, String authCode, String errCode, String errMsg) {
         this.userId = userId;
         this.success = success;
         this.authCode = authCode;

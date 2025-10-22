@@ -1,8 +1,11 @@
 package com.example.PIQResponseMock.services;
 
 import com.example.PIQResponseMock.helpers.Convert;
+import com.example.PIQResponseMock.model.Cancel;
 import com.example.PIQResponseMock.model.Transaction;
+import com.example.PIQResponseMock.repositories.AuthorizeRepository;
 import com.example.PIQResponseMock.repositories.TransactionRepository;
+import com.example.PIQResponseMock.repositories.TransferRepository;
 import com.example.PIQResponseMock.repositories.UserRepository;
 import com.example.PIQResponseMock.dto.*;
 import com.example.PIQResponseMock.model.User;
@@ -11,9 +14,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
 import javax.persistence.EntityNotFoundException;
-import java.util.UUID;
 
 @Service
 public class IntegrationApiService {
@@ -21,84 +24,29 @@ public class IntegrationApiService {
     AuthService authService;
     TransactionService transactionService;
     TransactionRepository transactionRepository;
+    AuthorizeRepository authorizeRepository;
 
     @Autowired
-    public IntegrationApiService(UserRepository userRepository, AuthService authService, TransactionService transactionService, TransactionRepository transactionRepository) {
+    public IntegrationApiService(UserRepository userRepository, AuthService authService, TransactionService transactionService, TransactionRepository transactionRepository, AuthorizeRepository authorizeRepository) {
         this.userRepository = userRepository;
         this.authService = authService;
         this.transactionService = transactionService;
         this.transactionRepository = transactionRepository;
+        this.authorizeRepository = authorizeRepository;
     }
 
-    public ResponseEntity<VerifyUserResponse> verifyUser(VerifyUserDTO verifyUserDTO) {
-        VerifyUserResponse verifyUserResponse = buildVerifyUserResponse(verifyUserDTO);
+    public ResponseEntity<VerifyUserResponse> verifyUser(VerifyUserResponseDTO verifyUserResponseDTO) {
+        VerifyUserResponse verifyUserResponse = buildVerifyUserResponse(verifyUserResponseDTO);
         return new ResponseEntity<>(verifyUserResponse, HttpStatus.OK);
     }
 
-    public VerifyUserResponse buildVerifyUserResponse(VerifyUserDTO verifyUserDTO) {
-        User user = userRepository.findById(verifyUserDTO.getUserId()).get();
-        AuthDTO authDTO = new AuthDTO(verifyUserDTO.getUserId(), verifyUserDTO.getSessionId());
-        boolean isActivated = authService.checkIfActivated(verifyUserDTO.getUserId());
-        boolean sessionActive;
-        if (authService.authUser(authDTO).getStatusCode().equals(org.springframework.http.HttpStatus.OK)) {
-            sessionActive = true;
-        } else sessionActive = false;
-        if (sessionActive && isActivated) {
-            return new VerifyUserResponse(
-                    user.getUserId(),
-                    true,
-                    user.getUserCat(),
-                    user.getKycStatus(),
-                    user.getSex(),
-                    user.getFirstName(),
-                    user.getLastName(),
-                    user.getStreet(),
-                    user.getCity(),
-                    user.getState(),
-                    user.getZip(),
-                    user.getCountry(),
-                    user.getEmail(),
-                    user.getDob(),
-                    user.getPhone(),
-                    user.getBalance(),
-                    user.getBalanceCy(),
-                    "sv_SE",
-                    new Attributes(
-                            "something1",
-                            "something2"
-                    )
-            );
-        } else if (!isActivated) {
-            return new VerifyUserResponse(
-                    user.getUserId(),
-                    false,
-                    user.getUserCat(),
-                    user.getKycStatus(),
-                    user.getSex(),
-                    user.getFirstName(),
-                    user.getLastName(),
-                    user.getStreet(),
-                    user.getCity(),
-                    user.getState(),
-                    user.getZip(),
-                    user.getCountry(),
-                    user.getEmail(),
-                    user.getDob(),
-                    user.getPhone(),
-                    user.getBalance(),
-                    user.getBalanceCy(),
-                    "sv_SE",
-                    new Attributes(
-                            "something1",
-                            "something2"
-                    ),
-                    02,
-                    "The user is blocked"
-            );
-        }
+    public VerifyUserResponse buildVerifyUserResponse(VerifyUserResponseDTO verifyUserResponseDTO) {
+        User user = userRepository.findByUserId(verifyUserResponseDTO.getUserId()).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
+
         return new VerifyUserResponse(
                 user.getUserId(),
-                false,
+                user.getSessionId(),
+                user.isSuccess(),
                 user.getUserCat(),
                 user.getKycStatus(),
                 user.getSex(),
@@ -111,129 +59,62 @@ public class IntegrationApiService {
                 user.getCountry(),
                 user.getEmail(),
                 user.getDob(),
-                user.getPhone(),
+                user.getMobile(),
                 user.getBalance(),
                 user.getBalanceCy(),
-                "sv_SE",
+                user.getLocale(),
+                user.getErrCode(),
+                user.getErrMsg(),
                 new Attributes(
                         "something1",
                         "something2"
-                ),
-                01,
-                "No active session found"
+                )
         );
+
     }
 
-    public ResponseEntity<AuthorizeResponse> authorize(AuthorizeDTO authorizeDTO) {
-        User user = userRepository.findById(authorizeDTO.getUserId()).get();
-        Transaction transaction = transactionService.createTransaction(authorizeDTO);
-        double calculatedBalance = authService.checkBalance(authorizeDTO.getUserId(), authorizeDTO.getTxAmount());
-        if (authorizeDTO.getTxName().equals("CreditcardWithdrawal")) {
-            if (calculatedBalance >= 0) {
-                AuthorizeResponse authorizeResponse = new AuthorizeResponse(
-                        user.getUserId(),
-                        true,
-                        transaction.getAuthCode());
-                user.setBalance(calculatedBalance);
-                userRepository.save(user);
-                return new ResponseEntity(authorizeResponse, HttpStatus.OK);
-            } else {
-                AuthorizeResponse authorizeResponse = new AuthorizeResponse(
-                        user.getUserId(),
-                        false,
-                        UUID.randomUUID().toString(),
-                        01,
-                        "Not enough funds");
-                return new ResponseEntity(authorizeResponse, HttpStatus.OK);
-            }
-        } else if (authorizeDTO.getTxName().equals("CreditcardDeposit")) {
-            AuthorizeResponse authorizeResponse = new AuthorizeResponse(
-                    user.getUserId(),
-                    true,
-                    UUID.randomUUID().toString());
-            return new ResponseEntity(authorizeResponse, HttpStatus.OK);
-        }
+    public ResponseEntity<AuthorizeResponse> authorize(AuthorizeResponseDTO authorizeResponseDTO) {
+        User user = userRepository.findByUserId(authorizeResponseDTO.getUserId()).orElseThrow(() -> new EntityNotFoundException("Authorize not found"));
 
-        AuthorizeResponse authorizeResponse = new AuthorizeResponse(
-                user.getUserId(),
-                false,
-                UUID.randomUUID().toString(),
-                02,
-                "User is blocked");
-        return new ResponseEntity(authorizeResponse, HttpStatus.OK);
+        AuthorizeResponse authorize = new AuthorizeResponse(
+                user.getAuthorize().getUserId(),
+                user.getAuthorize().isSuccess(),
+                user.getAuthorize().getAuthCode(),
+                user.getAuthorize().getErrCode(),
+                user.getAuthorize().getErrMsg()
+        );
+        return new ResponseEntity<>(authorize, HttpStatus.OK);
     }
 
-    public ResponseEntity<TransferResponse> transfer(TransferDTO transferDTO) {
-        User user = userRepository.findById(transferDTO.getUserId())
+    public ResponseEntity<TransferResponse> transfer(TransferResponseDTO transferResponseDTO) {
+        User user = userRepository.findByUserId(transferResponseDTO.getUserId())
                 .orElseThrow(() -> new EntityNotFoundException("User not found"));
 
-        if (transferDTO.getTxName().equals("CreditcardWithdrawal")) {
-            Transaction transaction = transactionRepository.findById(transferDTO.getAuthCode())
-                    .orElseThrow(() -> new EntityNotFoundException("Transaction not found"));
-            TransferResponse transferResponse = new TransferResponse(
-                    user.getUserId(),
-                    true,
-                    transferDTO.getTxId()
-            );
-            transaction.setFinalized(true);
-            transactionRepository.save(transaction);
-            return new ResponseEntity<>(transferResponse, HttpStatus.OK);
-        }
-
-        double convertedTxAmount;
-        try {
-            convertedTxAmount = Double.parseDouble(transferDTO.getTxAmount());
-        } catch (NumberFormatException e) {
-            convertedTxAmount = 0;
-        }
-
-        double newBalance = user.getBalance() + convertedTxAmount;
-        user.setBalance(Convert.twoDecimals(newBalance));
-        userRepository.save(user);
         TransferResponse transferResponse = new TransferResponse(
-                user.getUserId(),
-                true,
-                transferDTO.getTxId()
+                user.getTransfer().getUserId(),
+                user.getTransfer().isSuccess(),
+                user.getTransfer().getTxId(),
+                user.getTransfer().getMerchantTxId(),
+                user.getTransfer().getErrCode(),
+                user.getTransfer().getErrMsg()
         );
-        return new ResponseEntity<>(transferResponse, HttpStatus.OK);
+            return ResponseEntity.ok(transferResponse);
     }
 
-    public ResponseEntity<CancelResponse> cancel(CancelDTO cancelDTO) {
-        User user = userRepository.findById(cancelDTO.getUserId()).orElseThrow(() -> new EntityNotFoundException("User not found"));
-        Transaction transaction = transactionRepository.findById(cancelDTO.getAuthCode()).orElseThrow(() -> new EntityNotFoundException("Transaction not found"));
-        if (cancelDTO.getTxName().equals("CreditcardWithdrawal")) {
-            //Need to reverse the amount since this is giving the user back the amount?
-            double convertedTxAmount;
-            try {
-                convertedTxAmount = Double.parseDouble(cancelDTO.getTxAmount());
-            } catch (NumberFormatException e) {
-                convertedTxAmount = 0;
-            }
-            double newBalance = user.getBalance() - convertedTxAmount;
-            user.setBalance(Convert.twoDecimals(newBalance));
-            userRepository.save(user);
-            transaction.setFinalized(true);
-            transactionRepository.save(transaction);
-            CancelResponse cancelResponse = new CancelResponse(
-                    user.getUserId(),
-                    true,
-                    05,
-                    "No errors"
-            );
-            return new ResponseEntity(cancelResponse, HttpStatus.OK);
-        }
-        transaction.setFinalized(true);
-        transactionRepository.save(transaction);
+    public ResponseEntity<CancelResponse> cancel(CancelResponseDTO cancelResponseDTO) {
+        User user = userRepository.findByUserId(cancelResponseDTO.getUserId()).orElseThrow(() -> new EntityNotFoundException("User not found"));
+
         CancelResponse cancelResponse = new CancelResponse(
-                cancelDTO.getUserId(),
-                true,
-                01,
-                "Nothing went wrong"
+                user.getCancel().getUserId(),
+                user.getCancel().isSuccess(),
+                user.getCancel().getErrCode(),
+                user.getCancel().getErrMsg()
         );
-        return new ResponseEntity(cancelResponse, HttpStatus.OK);
+
+        return ResponseEntity.ok(cancelResponse);
     }
 
-    public ResponseEntity<NotificationResponse> notification(NotificationDTO notificationDTO) {
+    public ResponseEntity<NotificationResponse> notification(NotificationResponseDTO notificationResponseDTO) {
         NotificationResponse notificationResponse = new NotificationResponse(
                 true,
                 400,
@@ -242,7 +123,7 @@ public class IntegrationApiService {
         return new ResponseEntity(notificationResponse, HttpStatus.OK);
     }
 
-    public ResponseEntity<LookupUserResponse> lookupUser(LookupUserDTO lookupUserDTO) {
+    public ResponseEntity<LookupUserResponse> lookupUser(LookupUserResponseDTO lookupUserResponseDTO) {
         LookupUserResponse lookupUserResponse = new LookupUserResponse(
                 "JonasEUR",
                 true,

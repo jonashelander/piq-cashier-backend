@@ -9,7 +9,7 @@ public class TransferResponse {
     String userId;
     boolean success;
     String txId;
-    //int merchantTxId;
-    //int errCode;
-    //String errMsg;
+    String merchantTxId;
+    String errCode;
+    String errMsg;
 }

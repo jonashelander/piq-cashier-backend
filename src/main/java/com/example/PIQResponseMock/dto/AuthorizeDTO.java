@@ -1,24 +1,17 @@
 package com.example.PIQResponseMock.dto;
 
-import com.example.PIQResponseMock.responses.Attributes;
+import lombok.AllArgsConstructor;
 import lombok.Data;
 
+import javax.persistence.Id;
+
 @Data
+@AllArgsConstructor
 public class AuthorizeDTO {
     String userId;
-    String txAmount;
-    String txAmountCy;
-    String txId;
-    String txTypeId;
-    String txName;
-    String provider;
-    String pspService;
-    String originTxId;
-    String accountId;
-    String accountHolder;
-    String pspFee;
-    String pspFeeCy;
-    String pspFeeBase;
-    String pspFeeBaseCy;
-    Attributes attributes;
+    boolean success;
+    String merchantTxId;
+    String authCode;
+    String errCode;
+    String errMsg;
 }

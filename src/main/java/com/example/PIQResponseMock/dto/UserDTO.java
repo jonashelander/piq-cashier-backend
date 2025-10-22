@@ -3,16 +3,15 @@ package com.example.PIQResponseMock.dto;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 
-import java.math.BigDecimal;
-import java.math.RoundingMode;
-import java.text.DecimalFormat;
-
 
 @Data
 @AllArgsConstructor
 public class UserDTO {
+    String id;
     String userId;
     String sessionId;
+    String token;
+    boolean success;
     String firstName;
     String lastName;
     String dob;
@@ -22,12 +21,18 @@ public class UserDTO {
     String state;
     String street;
     String zip;
-    String phone;
+    String mobile;
     String email;
     double balance;
     String balanceCy;
     boolean activated;
     String userCat;
     String kycStatus;
+    String errCode;
+    String errMsg;
+    String locale;
+    private AuthorizeDTO authorize;
+    private TransferDTO transfer;
+    private CancelDTO cancel;
 }
 

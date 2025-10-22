@@ -5,11 +5,13 @@ import lombok.Data;
 
 @Data
 @AllArgsConstructor
-public class TransferDTO {
+public class CancelResponseDTO {
     String userId;
-    boolean success;
+    String authCode;
+    String txAmount;
+    String txAmountCy;
     String txId;
-    String merchantTxId;
-    String errCode;
-    String errMsg;
+    String txTypeId;
+    String txName;
+    String provider;
 }
