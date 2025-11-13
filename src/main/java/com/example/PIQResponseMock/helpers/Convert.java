@@ -1,10 +1,9 @@
 package com.example.PIQResponseMock.helpers;
 
-import com.example.PIQResponseMock.dto.AuthorizeDTO;
-import com.example.PIQResponseMock.dto.CancelDTO;
-import com.example.PIQResponseMock.dto.TransferDTO;
-import com.example.PIQResponseMock.dto.UserDTO;
+import com.example.PIQResponseMock.dto.*;
 import com.example.PIQResponseMock.model.User;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.Data;
 
 import java.math.BigDecimal;
@@ -48,6 +47,81 @@ public class Convert {
             );
         }
 
+        VerifyUserLogDTO verifyUserLogDTO = null;
+        if (user.getVerifyUserLog() != null) {
+            ObjectMapper mapper = new ObjectMapper();
+
+            JsonNode incomingNode = null;
+            JsonNode outgoingNode = null;
+
+            try {
+                if (user.getVerifyUserLog().getIncomingData() != null) {
+                    incomingNode = mapper.readTree(user.getVerifyUserLog().getIncomingData());
+                }
+                if (user.getVerifyUserLog().getOutgoingData() != null) {
+                    outgoingNode = mapper.readTree(user.getVerifyUserLog().getOutgoingData());
+                }
+            } catch (Exception e) {
+                // Optional: log or ignore
+            }
+            verifyUserLogDTO = new VerifyUserLogDTO(incomingNode, outgoingNode);
+        }
+
+        AuthorizeLogDTO authorizeLogDTO = null;
+        if (user.getAuthorizeLog() != null) {
+            ObjectMapper mapper = new ObjectMapper();
+            JsonNode incomingNode = null;
+            JsonNode outgoingNode = null;
+            try {
+                if (user.getAuthorizeLog().getIncomingData() != null) {
+                    incomingNode = mapper.readTree(user.getAuthorizeLog().getIncomingData());
+                }
+                if (user.getAuthorizeLog().getOutgoingData() != null) {
+                    outgoingNode = mapper.readTree(user.getAuthorizeLog().getOutgoingData());
+                }
+            } catch (Exception e) {
+                // Optional: log or ignore
+            }
+            authorizeLogDTO = new AuthorizeLogDTO(incomingNode, outgoingNode);
+        }
+
+        TransferLogDTO transferLogDTO = null;
+        if (user.getTransferLog() != null) {
+            ObjectMapper mapper = new ObjectMapper();
+            JsonNode incomingNode = null;
+            JsonNode outgoingNode = null;
+            try {
+                if (user.getTransferLog().getIncomingData() != null) {
+                    incomingNode = mapper.readTree(user.getTransferLog().getIncomingData());
+                }
+                if (user.getTransferLog().getOutgoingData() != null) {
+                    outgoingNode = mapper.readTree(user.getTransferLog().getOutgoingData());
+                }
+            } catch (Exception e) {
+                // Optional: log or ignore
+            }
+            transferLogDTO = new TransferLogDTO(incomingNode, outgoingNode);
+        }
+
+        CancelLogDTO cancelLogDTO = null;
+        if (user.getCancelLog() != null) {
+            ObjectMapper mapper = new ObjectMapper();
+            JsonNode incomingNode = null;
+            JsonNode outgoingNode = null;
+            try {
+                if (user.getCancelLog().getIncomingData() != null) {
+                    incomingNode = mapper.readTree(user.getCancelLog().getIncomingData());
+                }
+                if (user.getCancelLog().getOutgoingData() != null) {
+                    outgoingNode = mapper.readTree(user.getCancelLog().getOutgoingData());
+                }
+            } catch (Exception e) {
+                // Optional: log or ignore
+            }
+            cancelLogDTO = new CancelLogDTO(incomingNode, outgoingNode);
+        }
+
+
         return new UserDTO(
                 user.getId(),
                 user.getUserId(),
@@ -75,8 +149,11 @@ public class Convert {
                 user.getLocale(),
                 authorizeDTO,
                 transferDTO,
-                cancelDTO
-
+                cancelDTO,
+                verifyUserLogDTO,
+                authorizeLogDTO,
+                transferLogDTO,
+                cancelLogDTO
         );
     }
 

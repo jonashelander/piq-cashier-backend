@@ -1,5 +1,6 @@
 package com.example.PIQResponseMock.dto;
 
+import com.example.PIQResponseMock.model.VerifyUserLog;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 
@@ -34,5 +35,8 @@ public class UserDTO {
     private AuthorizeDTO authorize;
     private TransferDTO transfer;
     private CancelDTO cancel;
+    private VerifyUserLogDTO verifyUserLog;
+    private AuthorizeLogDTO authorizeLog;
+    private TransferLogDTO transferLog;
+    private CancelLogDTO cancelLog;
 }
-

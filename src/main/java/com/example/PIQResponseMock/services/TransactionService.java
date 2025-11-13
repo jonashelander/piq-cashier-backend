@@ -16,9 +16,9 @@ public class TransactionService {
         this.transactionRepository = transactionRepository;
     }
 
-    public Transaction createTransaction(AuthorizeResponseDTO authorizeResponseDTO) {
+/*    public Transaction createTransaction(AuthorizeResponseDTO authorizeResponseDTO) {
         Transaction transaction = new Transaction(authorizeResponseDTO.getUserId(), authorizeResponseDTO.getTxName(), authService.convertTxAmount(authorizeResponseDTO.getTxAmount()));
         transactionRepository.save(transaction);
         return transaction;
-    }
+    }*/
 }

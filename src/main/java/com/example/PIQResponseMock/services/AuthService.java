@@ -1,18 +1,12 @@
 package com.example.PIQResponseMock.services;
 
-import com.example.PIQResponseMock.model.Authorize;
-import com.example.PIQResponseMock.model.Cancel;
-import com.example.PIQResponseMock.model.Transfer;
-import com.example.PIQResponseMock.repositories.AuthorizeRepository;
-import com.example.PIQResponseMock.repositories.CancelRepository;
-import com.example.PIQResponseMock.repositories.TransferRepository;
-import com.example.PIQResponseMock.repositories.UserRepository;
+import com.example.PIQResponseMock.model.*;
+import com.example.PIQResponseMock.repositories.*;
 import com.example.PIQResponseMock.dto.AuthDTO;
 import com.example.PIQResponseMock.dto.SignInResponseDTO;
 import com.example.PIQResponseMock.dto.SignUpResponseDTO;
 import com.example.PIQResponseMock.dto.UserDTO;
 import com.example.PIQResponseMock.helpers.Convert;
-import com.example.PIQResponseMock.model.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -28,23 +22,21 @@ public class AuthService {
     AuthorizeRepository authorizeRepository;
     TransferRepository transferRepository;
     CancelRepository cancelRepository;
+    LogRepository logRepository;
 
     @Autowired
-    public AuthService(UserRepository userRepository, AuthorizeRepository authorizeRepository, TransferRepository transferRepository, CancelRepository cancelRepository) {
+    public AuthService(UserRepository userRepository, AuthorizeRepository authorizeRepository, TransferRepository transferRepository, CancelRepository cancelRepository, LogRepository logRepository) {
         this.userRepository = userRepository;
         this.authorizeRepository = authorizeRepository;
         this.transferRepository = transferRepository;
         this.cancelRepository = cancelRepository;
+        this.logRepository = logRepository;
     }
 
     public UserDTO signUp(SignUpResponseDTO signUpResponseDTO) {
-        //This will be the verifyuser response
+
         User user = new User(signUpResponseDTO.getUserId(), signUpResponseDTO.getFirstName(), signUpResponseDTO.getLastName(), signUpResponseDTO.getDob(), signUpResponseDTO.getSex(), signUpResponseDTO.getCountry(), signUpResponseDTO.getCity(), signUpResponseDTO.getState(), signUpResponseDTO.getStreet(), signUpResponseDTO.getZip(), signUpResponseDTO.getMobile(), signUpResponseDTO.getEmail(), signUpResponseDTO.getPassword(), true, "New member", "errCode", "errMsg", "en_GB", "authCode");
 
-        //Make sure the userId is unique
-        //To be added
-
-        //Create responses(authorize, transfer, cancel)
         Authorize authorize = new Authorize(signUpResponseDTO.getUserId(), true, UUID.randomUUID().toString(), UUID.randomUUID().toString(), "001", "Error message");
         authorize.setUser(user);
         user.setAuthorize(authorize);
@@ -56,6 +48,10 @@ public class AuthService {
         Cancel cancel = new Cancel(user.getId(), "UserId", true, "001", "errMsg");
         cancel.setUser(user);
         user.setCancel(cancel);
+
+        VerifyUserLog verifyUserLog = new VerifyUserLog("", "");
+        verifyUserLog.setUser(user);
+        user.setVerifyUserLog(verifyUserLog);
 
         userRepository.save(user);
         return Convert.convertUserToDTO(user);

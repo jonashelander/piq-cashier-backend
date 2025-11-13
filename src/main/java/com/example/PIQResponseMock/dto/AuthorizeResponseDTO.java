@@ -1,24 +1,6 @@
 package com.example.PIQResponseMock.dto;
 
-import com.example.PIQResponseMock.responses.Attributes;
-import lombok.Data;
-
-@Data
+// This DTO is no longer needed for logging, as logging is now dynamic and handled via JsonNode in the controller/service.
+// The class is intentionally left empty or can be deleted if not used elsewhere.
 public class AuthorizeResponseDTO {
-    String userId;
-    String txAmount;
-    String txAmountCy;
-    String txId;
-    String txTypeId;
-    String txName;
-    String provider;
-    String pspService;
-    String originTxId;
-    String accountId;
-    String accountHolder;
-    String pspFee;
-    String pspFeeCy;
-    String pspFeeBase;
-    String pspFeeBaseCy;
-    Attributes attributes;
 }

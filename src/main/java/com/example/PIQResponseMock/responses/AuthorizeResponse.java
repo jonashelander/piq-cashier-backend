@@ -6,6 +6,7 @@ import com.fasterxml.jackson.annotation.JsonView;
 import lombok.Data;
 
 import javax.swing.text.View;
+import java.util.Map;
 
 @Data
 public class AuthorizeResponse {
@@ -15,6 +16,7 @@ public class AuthorizeResponse {
     String authCode;
     String errCode;
     String errMsg;
+    Map<String, String> headers;
 
 
     public AuthorizeResponse(String userId, boolean success, String authCode) {
@@ -29,5 +31,14 @@ public class AuthorizeResponse {
         this.authCode = authCode;
         this.errCode = errCode;
         this.errMsg = errMsg;
+    }
+
+    public AuthorizeResponse(String userId, boolean success, String authCode, String errCode, String errMsg, Map<String, String> headers) {
+        this.userId = userId;
+        this.success = success;
+        this.authCode = authCode;
+        this.errCode = errCode;
+        this.errMsg = errMsg;
+        this.headers = headers;
     }
 }
