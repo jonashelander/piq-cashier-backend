@@ -1,29 +1,20 @@
-# Use the official Maven image as a base image
-FROM maven:3.8.4-openjdk-17-slim AS build
+# ---- Build stage ----
+FROM maven:3.9.6-eclipse-temurin-17 AS build
 
-# Set the working directory in the container
 WORKDIR /app
-
-# Copy the Maven project file
 COPY pom.xml .
-
-# Copy the source code
 COPY src ./src
 
-# Build the application
 RUN mvn clean package -DskipTests
 
-# Create a new image with the full JDK
-FROM openjdk:17-slim
+# ---- Run stage ----
+FROM eclipse-temurin:17-jdk-jammy
 
-# Set the working directory in the container
 WORKDIR /app
-
-# Copy the JAR file from the build stage
 COPY --from=build /app/target/*.jar ./app.jar
 
-# Expose the port your Spring Boot application runs on
+# Use the Railway-provided PORT env variable
 EXPOSE 8080
 
-# Define the command to run your application
+# Run the app
 CMD ["java", "-jar", "app.jar"]
